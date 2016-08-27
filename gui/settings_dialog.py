@@ -317,9 +317,12 @@ class SettingsDialog(QtGui.QWidget):
 
         self.name_textbox.setText(decrypt(user['UserName']))
         self.email_textbox.setText(decrypt(user['UserEmail']))
-        # the UserEmailPassword value needs to be doubly decrypted;
-        # as to why, I'm not sure yet
-        self.password_textbox.setText(decrypt(decrypt(user['UserEmailPassword'])))
+        try:
+            self.password_textbox.setText(decrypt(user['UserEmailPassword']))
+        except:
+            # there's been times when the UserEmailPassword value needs to
+            # be doubly decrypted; as to why, I'm not sure yet
+            self.password_textbox.setText(decrypt(decrypt(user['UserEmailPassword'])))
 
         partner_emails = decrypt(user['PartnerEmails']).split(', ')
         row_index = 0
