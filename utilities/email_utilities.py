@@ -1,32 +1,52 @@
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
+
 from security_utilities import decrypt
 from email.mime.text import MIMEText
-from database import queries
+from constants import constants
 from datetime import datetime
+from database import queries
 
 
-# keeps track of the date in which the
-# last email was sent
+# keeps track of the date in which
+# the last email was sent
 date_last_email_was_sent = datetime.now()
 
-# a boolean that's used to determine
-# within a loop if an email has been sent
-has_email_been_sent = True
+# the number of days to wait to send
+# the next email when the email
+# frequency is on a daily basis
+daily_frequency = 1
+
+# the number of days to wait to send
+# the next email when the email
+# frequency is on a weekly basis
+weekly_frequency = 7
 
 
-def send_email(sender_name, sender_email, sender_password, recipients):
+def send_scheduled_email():
     """
-    Sends the activity report to the user's
-    accountability partners.
+    Sends a scheduled email based upon the frequency the user
+    has set for when the activity report is to be emailed to
+    the user's accountability partners.
 
-    :param sender_name: the name of the user (e.g., "John Doe")
-    :param sender_email: the user's email address
-    :param sender_password: the user's email address password
-    :param recipients: the user's accountability partners' email addresses
     :return:
     """
+    global date_last_email_was_sent
+
+    if has_email_been_sent():
+        return
+
+    sender_name = decrypt(constants.current_user['UserName'])
+    sender_email = decrypt(constants.current_user['UserEmail'])
+    try:
+        sender_password = decrypt(constants.current_user['UserEmailPassword'])
+    except:
+        # there's been times when the UserEmailPassword value needs to
+        # be doubly decrypted; as to why, I'm not sure yet
+        sender_password = decrypt(decrypt(constants.current_user['UserEmailPassword']))
+    recipients = decrypt(constants.current_user['PartnerEmails'])
+
     message = MIMEMultipart()
     message['From'] = sender_email
     message['Subject'] = 'KeepInChecker User Activity Report for ' + sender_name
@@ -42,6 +62,36 @@ def send_email(sender_name, sender_email, sender_password, recipients):
     text = message.as_string()
     server.sendmail(sender_email, recipients_list, text)
     server.quit()
+
+    date_last_email_was_sent = datetime.now()
+
+
+def has_email_been_sent():
+    """
+    Checks the last time an email was sent, and
+    with that timestamp verifies whether the next
+    email needs to be sent or not.
+
+    :return:
+    """
+    global date_last_email_was_sent
+    global daily_frequency
+    global weekly_frequency
+
+    if constants.current_user['EmailFrequency'] == 'Daily':
+        email_frequency = daily_frequency
+    else:
+        email_frequency = weekly_frequency
+
+    time_between_last_email_sent_to_now = datetime.now() - date_last_email_was_sent
+
+    # if the time in days of the last email being sent
+    # is equal to the email frequency, then the email
+    # hasn't been sent, and thus we need to send it
+    if time_between_last_email_sent_to_now.days == email_frequency:
+        return False
+
+    return True
 
 
 def generate_body_text(sender_name):

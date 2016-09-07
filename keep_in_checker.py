@@ -1,10 +1,8 @@
-import random
 import threading
+import random
 
 from utilities import browser_utilities, email_utilities
-from utilities.security_utilities import decrypt
 from constants import constants
-from datetime import datetime
 from database import queries
 from time import sleep
 
@@ -36,39 +34,6 @@ def record_network_traffic():
     sniffer_thread.start()
 
 
-def send_scheduled_email():
-    """
-    Sends an activity report email to the
-    user's accountability partners. It will
-    send an email based at a frequency
-    determined by the user (e.g. daily or
-    weekly).
-
-    :return:
-    """
-    email_frequency = 1 if constants.current_user['EmailFrequency'] == 'Daily' else 7
-    time_of_last_email_sent_to_now = datetime.now() - email_utilities.date_last_email_was_sent
-
-    if time_of_last_email_sent_to_now.days == email_frequency:
-        email_utilities.has_email_been_sent = False
-
-    if not email_utilities.has_email_been_sent:
-        username = decrypt(constants.current_user['UserName'])
-        user_email = decrypt(constants.current_user['UserEmail'])
-        try:
-            user_email_password = decrypt(constants.current_user['UserEmailPassword'])
-        except:
-            # there's been times when the UserEmailPassword value needs to
-            # be doubly decrypted; as to why, I'm not sure yet
-            user_email_password = decrypt(decrypt(constants.current_user['UserEmailPassword']))
-        partner_emails = decrypt(constants.current_user['PartnerEmails'])
-
-        email_utilities.send_email(username, user_email, user_email_password, partner_emails)
-
-        email_utilities.has_email_been_sent = True
-        email_utilities.date_last_email_was_sent = datetime.now()
-
-
 def main():
     """
     The main method. This contains a
@@ -90,6 +55,6 @@ def main():
         record_network_traffic()
 
         try:
-            send_scheduled_email()
+            email_utilities.send_scheduled_email()
         except:
             pass
