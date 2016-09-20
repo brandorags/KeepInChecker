@@ -7,6 +7,11 @@ from database import queries
 from time import sleep
 
 
+# thread object that's used
+# to scan network traffic
+sniffer_thread = threading.Thread()
+
+
 def initialize_current_user():
     """
     Gets the data about the current
@@ -30,8 +35,11 @@ def record_network_traffic():
 
     :return:
     """
-    sniffer_thread = threading.Thread(target=browser_utilities.scan_user_internet_traffic)
-    sniffer_thread.start()
+    global sniffer_thread
+
+    if not sniffer_thread.isAlive():
+        sniffer_thread = threading.Thread(target=browser_utilities.scan_user_internet_traffic)
+        sniffer_thread.start()
 
 
 def main():
@@ -46,8 +54,7 @@ def main():
     initialize_current_user()
 
     while True:
-        interval = random.randint(60, 240)
-        sleep(interval)
+        sleep(10)
 
         if not constants.current_user:
             return
