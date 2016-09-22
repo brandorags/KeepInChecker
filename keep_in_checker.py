@@ -1,5 +1,4 @@
 import threading
-import random
 
 from utilities import browser_utilities, email_utilities
 from constants import constants

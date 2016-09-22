@@ -1,5 +1,5 @@
 # list that contains words/phrases that are considered objectionable content
-objectionable_words_list = ['stackoverflow', 'imgur', 'reddit', 'awesome']
+objectionable_words_list = ['stackoverflow', 'imgur', 'reddit', 'awesome', 'the']
 
 # list that contains websited that don't need to be sniffed
 whitelisted_websites = []

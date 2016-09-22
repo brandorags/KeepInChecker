@@ -161,9 +161,32 @@ def store_packets(pkt_header, data):
     of the packet and the value as the packet
     itself
     """
+    global sniffed_data
+
     packet = EthDecoder().decode(data)
     packet_arrival_time = pkt_header.getts()
     sniffed_data[packet_arrival_time] = packet
+
+
+def sniff_packets(packet_num):
+    """
+    Creates a packet sniffer object that will perform the scan
+    of packets over the network.
+    :param packet_num: the maximum number of packets to capture
+    :return:
+    """
+    interface = get_current_network_interface()
+    max_bytes = 1024
+    promiscuous_mode = False
+    read_timeout = 30
+    packet_sniffer = pcapy.open_live(interface, max_bytes, promiscuous_mode, read_timeout)
+
+    number_of_packets_to_capture = packet_num
+
+    try:
+        packet_sniffer.loop(number_of_packets_to_capture, store_packets)
+    except:
+        return
 
 
 def scan_user_internet_traffic():
@@ -175,19 +198,9 @@ def scan_user_internet_traffic():
     :return:
     """
     objectionable_packets = []
-
-    interface = get_current_network_interface()
-    max_bytes = 1024
-    promiscuous_mode = False
-    read_timeout = 30
-    packet_sniffer = pcapy.open_live(interface, max_bytes, promiscuous_mode, read_timeout)
-
     number_of_packets_to_capture = 1000
 
-    try:
-        packet_sniffer.loop(number_of_packets_to_capture, store_packets)
-    except:
-        return
+    sniff_packets(number_of_packets_to_capture)
 
     for packet_arrival_time, packet in sniffed_data.iteritems():
         if is_packet_from_whitelisted_website(packet):
@@ -210,3 +223,6 @@ def scan_user_internet_traffic():
     if objectionable_packets:
         insert_packets_into_database(objectionable_packets)
         del objectionable_packets[:]
+
+    if sniffed_data:
+        sniffed_data.clear()
