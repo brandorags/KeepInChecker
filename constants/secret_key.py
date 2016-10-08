@@ -1,5 +1,4 @@
-# these two variables are used with PyCrypto for
+# this variable is used with pyaes for
 # encryption and decryption of database data
-# NOTE: these are NOT the values used in production
+# NOTE: this is NOT the value used in production
 key = b'yT#s;p]$bBw%nIj&kBoP014C'
-iv = b'uEtH7%3)-+]<UbW3'
