@@ -7,7 +7,6 @@ import keep_in_checker
 import resources_rc
 
 from gui.settings_dialog import SettingsDialog
-from database.db_session import DbSession
 from PySide.QtGui import *
 
 
@@ -77,9 +76,6 @@ class SystemTray(object):
 
 
 if __name__ == '__main__':
-    db = DbSession()
-    db.create_tables_if_none_exist()
-
     # begins the process that runs the background work,
     # such as packet sniffing, emailing, etc.
     keep_in_checker_backend = multiprocessing.Process(target=keep_in_checker.main)

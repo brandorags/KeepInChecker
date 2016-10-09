@@ -23,15 +23,14 @@ def save_user_data(user_name, user_email, user_email_password,
                          user_email_password, partner_emails, email_frequency)
         return
 
-    db = DbSession()
+    db = DbSession(constants.database_path)
     sql = 'INSERT INTO User (UserName, UserEmail, UserEmailPassword, PartnerEmails, EmailFrequency) ' \
           'VALUES(\'' + encrypt(user_name) + '\'' + ',\'' + encrypt(user_email) + '\'' + ',\'' + \
           encrypt(user_email_password) + '\'' + ',\'' + encrypt(partner_emails) + '\'' + ',\'' + \
           encrypt(email_frequency) + '\')'
 
     db.cursor.execute(sql)
-    db.commit()
-    db.close()
+    db.commit_and_close()
 
     constants.current_user = get_current_user()
 
@@ -50,39 +49,37 @@ def update_user_data(existing_user, user_name, user_email, user_email_password,
     :param email_frequency: the frequency in which to send the emails (e.g., "Daily")
     :return:
     """
-    db = DbSession()
+    db = DbSession(constants.database_path)
     sql = 'UPDATE User SET'
     update_values = ''
     needs_update = False
 
-    if existing_user['UserName'] != user_name:
+    if decrypt(existing_user['UserName']) != user_name:
         update_values += ' UserName = \'' + encrypt(user_name) + '\','
         needs_update = True
 
-    if existing_user['UserEmail'] != user_email:
+    if decrypt(existing_user['UserEmail']) != user_email:
         update_values += ' UserEmail = \'' + encrypt(user_email) + '\','
         needs_update = True
 
     if decrypt(existing_user['UserEmailPassword']) != user_email_password:
-        encrypted_password = encrypt(user_email_password)
-        update_values += ' UserEmailPassword = \'' + encrypt(encrypted_password) + '\','
+        update_values += ' UserEmailPassword = \'' + encrypt(user_email_password) + '\','
         needs_update = True
 
-    if existing_user['PartnerEmails'] != partner_emails:
+    if decrypt(existing_user['PartnerEmails']) != partner_emails:
         update_values += ' PartnerEmails = \'' + encrypt(partner_emails) + '\','
         needs_update = True
 
-    if existing_user['EmailFrequency'] != email_frequency:
-        update_values += ' EmailFrequency = \'' + email_frequency + '\''
+    if decrypt(existing_user['EmailFrequency']) != email_frequency:
+        update_values += ' EmailFrequency = \'' + encrypt(email_frequency) + '\''
         needs_update = True
 
     if needs_update:
-        update_values = update_values.strip(',')
+        update_values = update_values.strip(',')  # remove any trailing commas
         sql += update_values + ' WHERE UserId = 1'
 
         db.cursor.execute(sql)
-        db.commit()
-        db.close()
+        db.commit_and_close()
 
         constants.current_user = get_current_user()
 
@@ -95,7 +92,7 @@ def insert_packets(objective_packets):
      packet objects which contain objectionable content
     :return:
     """
-    db = DbSession()
+    db = DbSession(constants.database_path)
 
     for obj_packet in objective_packets:
         for timestamp in obj_packet:
@@ -112,8 +109,7 @@ def insert_packets(objective_packets):
 
             db.cursor.execute(sql)
 
-    db.commit()
-    db.close()
+    db.commit_and_close()
 
 
 def get_packets():
@@ -122,7 +118,7 @@ def get_packets():
 
     :return: a list of packet objects
     """
-    db = DbSession()
+    db = DbSession(constants.database_path)
     packets = db.cursor.execute('SELECT * FROM Packet').fetchall()
 
     db.close()
@@ -137,7 +133,7 @@ def get_current_user():
 
     :return: an object which contains the user's personal data
     """
-    db = DbSession()
+    db = DbSession(constants.database_path)
     db.cursor.execute('SELECT * FROM User')
     current_user = db.cursor.fetchone()
 
