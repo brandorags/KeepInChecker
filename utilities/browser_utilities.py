@@ -1,6 +1,4 @@
 import netifaces as ni
-import subprocess
-import socket
 import pcapy
 
 from utilities import packet_utilities
@@ -16,29 +14,29 @@ from database import queries
 sniffed_data = {}
 
 
-def get_current_network_interface():
+def get_network_interface():
     """
     Gets the current interface in which
-    the network connection is passing through
-    (e.g., it determines if network traffic
-    is going through ethernet or wifi).
+    the network connection is passing through.
 
-    :return:
+    :return: the interface that is connected
+    to the network (e.g. en0, en1, etc.)
     """
-    current_network_interface = None
-    comp_ip = socket.gethostbyname(socket.gethostname())
+    network_interface = None
     interfaces = ni.interfaces()
+    interface_address_dict = {}
 
     for interface in interfaces:
-        try:
-            interface_ip = ni.ifaddresses(interface)[ni.AF_INET][0]['addr']
-            if str(interface_ip) == str(comp_ip):
-                current_network_interface = interface
-                break
-        except:
+        address = [i['addr'] for i in ni.ifaddresses(interface).setdefault(ni.AF_INET, [{'addr': ''}])][0]
+        interface_address_dict[interface] = address
+
+    for interface, address in interface_address_dict.iteritems():
+        if not address or address == '127.0.0.1':
             continue
 
-    return current_network_interface
+        network_interface = interface
+
+    return network_interface
 
 
 def format_packet(unformatted_packet, keyword):
@@ -62,7 +60,7 @@ def format_packet(unformatted_packet, keyword):
     return formatted_packet
 
 
-def create_packet_map(packet_arrival_time, packet):
+def create_packet_dict(packet_arrival_time, packet):
     """
     Creates a map that contains the packet's
     recorded arrival time in which the packet
@@ -76,7 +74,7 @@ def create_packet_map(packet_arrival_time, packet):
     :return: a map that contains formatted
     versions of the packet and the date of the packet
     """
-    packet_map = {}
+    packet_dict = {}
     get_host_referer_values = []
 
     for keyword in constants.packet_keywords:
@@ -84,9 +82,9 @@ def create_packet_map(packet_arrival_time, packet):
 
     # format the time in a more recognizable format
     packet_arrival_time = datetime.strftime(packet_arrival_time, '%m-%d-%Y %H:%M:%S')
-    packet_map[packet_arrival_time] = get_host_referer_values
+    packet_dict[packet_arrival_time] = get_host_referer_values
 
-    return packet_map
+    return packet_dict
 
 
 def remove_redundant_packets(packets):
@@ -175,7 +173,7 @@ def sniff_packets(packet_num):
     :param packet_num: the maximum number of packets to capture
     :return:
     """
-    interface = get_current_network_interface()
+    interface = get_network_interface()
     max_bytes = 1024
     promiscuous_mode = False
     read_timeout = 30
@@ -214,7 +212,7 @@ def scan_user_internet_traffic():
                 for obj_word in constants.objectionable_words_list:
                     if obj_word.lower() in str(packet).lower():
                         objectionable_word_found = True
-                        objectionable_packets.append(create_packet_map(arrival_time, str(packet)))
+                        objectionable_packets.append(create_packet_dict(arrival_time, str(packet)))
                         break
 
             if objectionable_word_found:
