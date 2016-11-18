@@ -31,14 +31,14 @@ class EmailUtilitiesTest(unittest.TestCase):
 
         # check if email has been sent with the current time
         # as the time representing when the email was sent
-        self.assertTrue(email_utilities.has_email_been_sent(), 'Email should have been sent already')
+        self.assertTrue(email_utilities.has_scheduled_email_been_sent(), 'Email should have been sent already')
 
         # check if email has been sent with the current time minus
         # a day as the time representing when the email was sent
         now = datetime.now()
         then = datetime(now.year, now.month, (now.day - 1))
         email_utilities.date_last_email_was_sent = then
-        self.assertFalse(email_utilities.has_email_been_sent(), 'Email should not have been sent yet')
+        self.assertFalse(email_utilities.has_scheduled_email_been_sent(), 'Email should not have been sent yet')
 
     def test_get_mail_server(self):
         gmail_address = 'test@gmail.com'

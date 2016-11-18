@@ -52,7 +52,7 @@ def send_scheduled_email():
     """
     global date_last_email_was_sent
 
-    if has_email_been_sent():
+    if has_scheduled_email_been_sent():
         return
 
     sender_name = decrypt(constants.current_user['UserName'])
@@ -84,7 +84,7 @@ def send_scheduled_email():
     date_last_email_was_sent = datetime.now()
 
 
-def has_email_been_sent():
+def has_scheduled_email_been_sent():
     """
     Checks the last time an email was sent, and
     with that timestamp verifies whether the next
