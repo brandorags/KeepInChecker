@@ -184,20 +184,25 @@ def store_packets(pkt_header, data):
     sniffed_data[packet_arrival_time] = packet
 
 
-def sniff_packets(packet_num):
+def sniff_packets(number_of_packets_to_capture):
     """
     Creates a packet sniffer object that will perform the scan
     of packets over the network.
-    :param packet_num: the maximum number of packets to capture
+    :param number_of_packets_to_capture: the maximum number of packets to capture
     :return:
     """
     interface = get_network_interface()
     max_bytes = 1024
     promiscuous_mode = False
     read_timeout = 30
-    packet_sniffer = pcapy.open_live(interface, max_bytes, promiscuous_mode, read_timeout)
 
-    number_of_packets_to_capture = packet_num
+    # if we didn't find an interface,
+    # then we most likely aren't
+    # connected to the internet
+    if not interface:
+        return
+
+    packet_sniffer = pcapy.open_live(interface, max_bytes, promiscuous_mode, read_timeout)
 
     try:
         packet_sniffer.loop(number_of_packets_to_capture, store_packets)

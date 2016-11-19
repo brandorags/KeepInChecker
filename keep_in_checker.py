@@ -16,7 +16,7 @@
 # along with KeepInChecker. If not, see <http://www.gnu.org/licenses/>.
 
 
-import threading
+import multiprocessing
 
 from utilities import browser_utilities, email_utilities
 from database.db_session import DbSession
@@ -25,9 +25,9 @@ from database import queries
 from time import sleep
 
 
-# thread object that's used
+# multiprocessing object that's used
 # to scan network traffic
-sniffer_thread = threading.Thread()
+sniffer_process = multiprocessing.Process()
 
 
 def initialize_database_connection():
@@ -65,11 +65,18 @@ def record_network_traffic():
 
     :return:
     """
-    global sniffer_thread
+    global sniffer_process
 
-    if not sniffer_thread.isAlive():
-        sniffer_thread = threading.Thread(target=browser_utilities.scan_user_internet_traffic)
-        sniffer_thread.start()
+    sniffer_process = multiprocessing.Process(target=browser_utilities.scan_user_internet_traffic)
+    sniffer_process.start()
+
+    sniffer_process.join(60)
+
+    # kill the process if it's still trying
+    # to sniff network traffic
+    if sniffer_process.is_alive():
+        sniffer_process.terminate()
+        sniffer_process.join()
 
 
 def main():
