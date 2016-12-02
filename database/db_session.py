@@ -97,5 +97,6 @@ class DbSession(object):
                                     `UserEmailPassword` TEXT NOT NULL,
                                     `PartnerEmails` TEXT NOT NULL,
                                     `EmailFrequency` TEXT NOT NULL,
+                                    `EmailLastSentDate` REAL,
                                     PRIMARY KEY(UserId)
                                 )''')

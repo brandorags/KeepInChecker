@@ -17,6 +17,7 @@
 
 
 import unittest
+import time
 import os
 
 from utilities.security_utilities import decrypt
@@ -76,6 +77,25 @@ class QueriesTest(unittest.TestCase):
 
         updated_email_frequency = decrypt(constants.current_user['EmailFrequency'])
         self.assertEqual(self.email_frequency, updated_email_frequency, 'Value should have been updated')
+
+    def test_insert_email_last_sent_date(self):
+        queries.save_user_data(self.user_name, self.user_email, self.user_email_password,
+                               self.partner_emails, self.email_frequency)
+
+        email_last_sent_date = time.time()
+        queries.insert_email_last_sent_date(email_last_sent_date)
+
+        self.assertEqual(format(email_last_sent_date, '.2f'),
+                         format(constants.current_user['EmailLastSentDate'], '.2f'),
+                         'Value should have been inserted into the database')
+
+        # run again to see if update works correctly
+        email_last_sent_date = time.time()
+        queries.insert_email_last_sent_date(email_last_sent_date)
+
+        self.assertEqual(format(email_last_sent_date, '.2f'),
+                         format(constants.current_user['EmailLastSentDate'], '.2f'),
+                         'Value should have been inserted into the database')
 
 
 if __name__ == '__main__':

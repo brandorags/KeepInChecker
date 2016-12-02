@@ -15,21 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with KeepInChecker. If not, see <http://www.gnu.org/licenses/>.
 
-
+import datetime as dt
+import time as t
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
-
 from security_utilities import decrypt
 from email.mime.text import MIMEText
 from constants import constants
-from datetime import datetime
 from database import queries
 
 
 # keeps track of the date in which
 # the last email was sent
-date_last_email_was_sent = datetime.now()
+date_last_email_was_sent = queries.get_email_last_sent_date()
 
 # the number of days to wait to send
 # the next email when the email
@@ -51,6 +50,9 @@ def send_scheduled_email():
     :return:
     """
     global date_last_email_was_sent
+
+    if not date_last_email_was_sent:
+        set_date_last_email_was_sent()
 
     if has_scheduled_email_been_sent():
         return
@@ -81,7 +83,14 @@ def send_scheduled_email():
     server.sendmail(sender_email, recipients_list, text)
     server.quit()
 
-    date_last_email_was_sent = datetime.now()
+    set_date_last_email_was_sent()
+
+
+def set_date_last_email_was_sent():
+    global date_last_email_was_sent
+
+    date_last_email_was_sent = t.time()
+    queries.insert_email_last_sent_date(date_last_email_was_sent)
 
 
 def has_scheduled_email_been_sent():
@@ -101,12 +110,14 @@ def has_scheduled_email_been_sent():
     else:
         email_frequency = weekly_frequency
 
-    time_between_last_email_sent_to_now = datetime.now() - date_last_email_was_sent
+    now = dt.datetime.now()
+    last = dt.datetime.fromtimestamp(date_last_email_was_sent)
+    time_between_last_email_sent_to_now = now - last
 
     # if the time in days of the last email being sent
-    # is equal to the email frequency, then the email
+    # is greater than or equal to the email frequency, then the email
     # hasn't been sent, and thus we need to send it
-    if time_between_last_email_sent_to_now.days == email_frequency:
+    if time_between_last_email_sent_to_now.days >= email_frequency:
         return False
 
     return True

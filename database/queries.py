@@ -45,7 +45,7 @@ def save_user_data(user_name, user_email, user_email_password,
     sql = 'INSERT INTO User (UserName, UserEmail, UserEmailPassword, PartnerEmails, EmailFrequency) ' \
           'VALUES(\'' + encrypt(user_name) + '\'' + ',\'' + encrypt(user_email) + '\'' + ',\'' + \
           encrypt(user_email_password) + '\'' + ',\'' + encrypt(partner_emails) + '\'' + ',\'' + \
-          encrypt(email_frequency) + '\')'
+          email_frequency + '\')'
 
     db.cursor.execute(sql)
     db.commit_and_close()
@@ -88,8 +88,8 @@ def update_user_data(existing_user, user_name, user_email, user_email_password,
         update_values += ' PartnerEmails = \'' + encrypt(partner_emails) + '\','
         needs_update = True
 
-    if decrypt(existing_user['EmailFrequency']) != email_frequency:
-        update_values += ' EmailFrequency = \'' + encrypt(email_frequency) + '\''
+    if existing_user['EmailFrequency'] != email_frequency:
+        update_values += ' EmailFrequency = \'' + email_frequency + '\''
         needs_update = True
 
     if needs_update:
@@ -158,3 +158,29 @@ def get_current_user():
     db.close()
 
     return current_user
+
+
+def get_email_last_sent_date():
+    db = DbSession(constants.database_path)
+    db.cursor.execute('SELECT EmailLastSentDate FROM User')
+    email_last_sent_date = db.cursor.fetchone()
+
+    db.close()
+
+    return email_last_sent_date['EmailLastSentDate']
+
+
+def insert_email_last_sent_date(date):
+    email_last_sent_date = get_email_last_sent_date()
+
+    if email_last_sent_date:
+        sql = 'UPDATE User SET EmailLastSentDate = \'' + str(date) + '\''
+    else:
+        sql = 'INSERT INTO User (EmailLastSentDate) ' \
+              'VALUES(\'' + str(date) + '\')'
+
+    db = DbSession(constants.database_path)
+    db.cursor.execute(sql)
+    db.commit_and_close()
+
+    constants.current_user = get_current_user()
