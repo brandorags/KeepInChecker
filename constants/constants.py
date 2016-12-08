@@ -32,6 +32,19 @@ packet_keywords = ['GET', 'Host', 'Referer']
 # the cached user object that contains the user's current credentials
 current_user = None
 
+# the dictionary of libraries that the app currently uses
+third_party_library_dict = {'altgraph (0.12)': 'https://pypi.python.org/pypi/altgraph/',
+                            'impacket (0.9.15)': 'https://pypi.python.org/pypi/impacket/0.9.15',
+                            'macholib (1.7)': 'https://pypi.python.org/pypi/macholib/',
+                            'modulegraph (0.12.1)': 'https://pypi.python.org/pypi/modulegraph/',
+                            'netifaces (0.10.5)': 'https://pypi.python.org/pypi/netifaces',
+                            'pyaes (1.6.0)': 'https://pypi.python.org/pypi/pyaes',
+                            'pcapy (0.10.10)': 'https://pypi.python.org/pypi/pcapy',
+                            'py2app (0.10)': 'https://pypi.python.org/pypi/py2app/',
+                            'PyInstaller (3.2)': 'http://www.pyinstaller.org/',
+                            'PySide (1.2.4)': 'https://wiki.qt.io/PySide',
+                            'Qt (4.8.7_2)': 'https://www.qt.io/'}
+
 # the path to the database; this frees up processing time for when
 # searching for the filename every time a database transaction is
 # made; a path to the database will be created if the database

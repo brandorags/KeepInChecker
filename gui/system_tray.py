@@ -25,6 +25,7 @@ import keep_in_checker
 import resources_rc
 
 from gui.settings_dialog import SettingsDialog
+from gui.about_dialog import AboutDialog
 from PySide.QtGui import *
 
 
@@ -46,6 +47,8 @@ class SystemTray(object):
         menu = QMenu()
         settings_action = menu.addAction('Settings...')
         settings_action.triggered.connect(self.settings)
+        about_action = menu.addAction('About KeepInChecker')
+        about_action.triggered.connect(self.about)
         quit_action = menu.addAction('Quit KeepInChecker')
         quit_action.triggered.connect(self.quit)
 
@@ -57,6 +60,7 @@ class SystemTray(object):
         self.tray.show()
 
         self.settings_dialog = SettingsDialog()
+        self.about_dialog = AboutDialog()
 
     def run(self):
         """
@@ -81,6 +85,16 @@ class SystemTray(object):
         self.settings_dialog.show()
         self.settings_dialog.activateWindow()
         self.settings_dialog.raise_()
+
+    def about(self):
+        """
+        Displays the about dialog box.
+
+        :return:
+        """
+        self.about_dialog.show()
+        self.about_dialog.activateWindow()
+        self.about_dialog.raise_()
 
     def quit(self):
         """
