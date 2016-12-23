@@ -17,10 +17,10 @@
 
 
 import unittest
+import time
 
 from utilities import email_utilities
 from constants import constants
-from datetime import datetime
 
 
 class EmailUtilitiesTest(unittest.TestCase):
@@ -31,12 +31,13 @@ class EmailUtilitiesTest(unittest.TestCase):
 
         # check if email has been sent with the current time
         # as the time representing when the email was sent
+        email_utilities.date_last_email_was_sent = time.time()
         self.assertTrue(email_utilities.has_scheduled_email_been_sent(), 'Email should have been sent already')
 
         # check if email has been sent with the current time minus
         # a day as the time representing when the email was sent
-        now = datetime.now()
-        then = datetime(now.year, now.month, (now.day - 1))
+        now = time.time()
+        then = now - 100000.0
         email_utilities.date_last_email_was_sent = then
         self.assertFalse(email_utilities.has_scheduled_email_been_sent(), 'Email should not have been sent yet')
 

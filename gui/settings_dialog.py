@@ -31,7 +31,6 @@ import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from utilities.security_utilities import decrypt
 from PySide import QtCore, QtGui
 from constants import constants
 from database import queries
@@ -333,16 +332,14 @@ class SettingsDialog(QtGui.QWidget):
         if not user:
             return
 
-        self.name_textbox.setText(decrypt(user['UserName']))
-        self.email_textbox.setText(decrypt(user['UserEmail']))
+        self.name_textbox.setText(user['UserName'])
+        self.email_textbox.setText(user['UserEmail'])
         try:
-            self.password_textbox.setText(decrypt(user['UserEmailPassword']))
+            self.password_textbox.setText(user['UserEmailPassword'])
         except:
-            # there's been times when the UserEmailPassword value needs to
-            # be doubly decrypted; as to why, I'm not sure yet
-            self.password_textbox.setText(decrypt(decrypt(user['UserEmailPassword'])))
+            self.password_textbox.setText(user['UserEmailPassword'])
 
-        partner_emails = decrypt(user['PartnerEmails']).split(', ')
+        partner_emails = user['PartnerEmails'].split(', ')
         row_index = 0
         for partner_email in partner_emails:
             self.partner_emails_table.setItem(row_index, 0, QtGui.QTableWidgetItem(partner_email))

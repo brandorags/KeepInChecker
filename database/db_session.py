@@ -16,7 +16,7 @@
 # along with KeepInChecker. If not, see <http://www.gnu.org/licenses/>.
 
 
-import sqlite3
+from pysqlcipher import dbapi2 as sqlite3
 
 
 class DbSession(object):
@@ -30,6 +30,8 @@ class DbSession(object):
         Makes the connection to the database, which allows for
         transactions to take place.
         """
+        pragma = 'thisIsThePragma5345d5918Jn'  # this key is NOT used in production
+
         self.database_path = database_path
 
         self.connection = sqlite3.connect(self.database_path)
@@ -37,6 +39,7 @@ class DbSession(object):
         self.connection.row_factory = sqlite3.Row
 
         self.cursor = self.connection.cursor()
+        self.cursor.execute('PRAGMA key=' + pragma)
 
     def get_database_path(self):
         """

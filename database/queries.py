@@ -16,7 +16,6 @@
 # along with KeepInChecker. If not, see <http://www.gnu.org/licenses/>.
 
 
-from utilities.security_utilities import encrypt, decrypt
 from database.db_session import DbSession
 from constants import constants
 from time import tzname
@@ -43,8 +42,8 @@ def save_user_data(user_name, user_email, user_email_password,
 
     db = DbSession(constants.database_path)
     sql = 'INSERT INTO User (UserName, UserEmail, UserEmailPassword, PartnerEmails, EmailFrequency) ' \
-          'VALUES(\'' + encrypt(user_name) + '\'' + ',\'' + encrypt(user_email) + '\'' + ',\'' + \
-          encrypt(user_email_password) + '\'' + ',\'' + encrypt(partner_emails) + '\'' + ',\'' + \
+          'VALUES(\'' + user_name + '\'' + ',\'' + user_email + '\'' + ',\'' + \
+          user_email_password + '\'' + ',\'' + partner_emails + '\'' + ',\'' + \
           email_frequency + '\')'
 
     db.cursor.execute(sql)
@@ -72,20 +71,20 @@ def update_user_data(existing_user, user_name, user_email, user_email_password,
     update_values = ''
     needs_update = False
 
-    if decrypt(existing_user['UserName']) != user_name:
-        update_values += ' UserName = \'' + encrypt(user_name) + '\','
+    if existing_user['UserName'] != user_name:
+        update_values += ' UserName = \'' + user_name + '\','
         needs_update = True
 
-    if decrypt(existing_user['UserEmail']) != user_email:
-        update_values += ' UserEmail = \'' + encrypt(user_email) + '\','
+    if existing_user['UserEmail'] != user_email:
+        update_values += ' UserEmail = \'' + user_email + '\','
         needs_update = True
 
-    if decrypt(existing_user['UserEmailPassword']) != user_email_password:
-        update_values += ' UserEmailPassword = \'' + encrypt(user_email_password) + '\','
+    if existing_user['UserEmailPassword'] != user_email_password:
+        update_values += ' UserEmailPassword = \'' + user_email_password + '\','
         needs_update = True
 
-    if decrypt(existing_user['PartnerEmails']) != partner_emails:
-        update_values += ' PartnerEmails = \'' + encrypt(partner_emails) + '\','
+    if existing_user['PartnerEmails'] != partner_emails:
+        update_values += ' PartnerEmails = \'' + partner_emails + '\','
         needs_update = True
 
     if existing_user['EmailFrequency'] != email_frequency:
@@ -114,11 +113,11 @@ def insert_packets(objective_packets):
 
     for obj_packet in objective_packets:
         for timestamp in obj_packet:
-            date_received_value = encrypt(timestamp)
+            date_received_value = timestamp
             timezone_value = tzname[0]
-            get_value = encrypt(obj_packet[timestamp][0])
-            host_value = encrypt(obj_packet[timestamp][1])
-            referer_value = encrypt(obj_packet[timestamp][2])
+            get_value = obj_packet[timestamp][0]
+            host_value = obj_packet[timestamp][1]
+            referer_value = obj_packet[timestamp][2]
 
             sql = 'INSERT INTO Packet (DateReceived, Timezone, Get, Host, Referer)' \
                   ' VALUES(\'' + str(date_received_value) + '\'' + ',' + \
@@ -161,23 +160,23 @@ def get_current_user():
 
 
 def get_email_last_sent_date():
-    db = DbSession(constants.database_path)
-    db.cursor.execute('SELECT EmailLastSentDate FROM User')
-    email_last_sent_date = db.cursor.fetchone()
+    if constants.current_user:
+        db = DbSession(constants.database_path)
+        db.cursor.execute('SELECT EmailLastSentDate FROM User')
+        email_last_sent_date = db.cursor.fetchone()
 
-    db.close()
+        db.close()
 
-    return email_last_sent_date['EmailLastSentDate']
-
-
-def insert_email_last_sent_date(date):
-    email_last_sent_date = get_email_last_sent_date()
-
-    if email_last_sent_date:
-        sql = 'UPDATE User SET EmailLastSentDate = \'' + str(date) + '\''
+        return email_last_sent_date['EmailLastSentDate']
     else:
-        sql = 'INSERT INTO User (EmailLastSentDate) ' \
-              'VALUES(\'' + str(date) + '\')'
+        return None
+
+
+def save_email_last_sent_date(date):
+    if not constants.current_user:
+        return
+
+    sql = 'UPDATE User SET EmailLastSentDate = \'' + str(date) + '\''
 
     db = DbSession(constants.database_path)
     db.cursor.execute(sql)

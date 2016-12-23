@@ -20,7 +20,6 @@ import unittest
 import time
 import os
 
-from utilities.security_utilities import decrypt
 from database.db_session import DbSession
 from constants import constants
 from database import queries
@@ -69,13 +68,13 @@ class QueriesTest(unittest.TestCase):
         queries.update_user_data(constants.current_user, self.user_name, self.user_email, self.user_email_password,
                                  self.partner_emails, self.email_frequency)
 
-        updated_user_name = decrypt(constants.current_user['UserName'])
+        updated_user_name = constants.current_user['UserName']
         self.assertEqual(self.user_name, updated_user_name, 'Value should have been updated')
 
-        updated_partner_emails = decrypt(constants.current_user['PartnerEmails'])
+        updated_partner_emails = constants.current_user['PartnerEmails']
         self.assertEqual(self.partner_emails, updated_partner_emails, 'Value should have been updated')
 
-        updated_email_frequency = decrypt(constants.current_user['EmailFrequency'])
+        updated_email_frequency = constants.current_user['EmailFrequency']
         self.assertEqual(self.email_frequency, updated_email_frequency, 'Value should have been updated')
 
     def test_insert_email_last_sent_date(self):
@@ -83,7 +82,7 @@ class QueriesTest(unittest.TestCase):
                                self.partner_emails, self.email_frequency)
 
         email_last_sent_date = time.time()
-        queries.insert_email_last_sent_date(email_last_sent_date)
+        queries.save_email_last_sent_date(email_last_sent_date)
 
         self.assertEqual(format(email_last_sent_date, '.2f'),
                          format(constants.current_user['EmailLastSentDate'], '.2f'),
@@ -91,11 +90,30 @@ class QueriesTest(unittest.TestCase):
 
         # run again to see if update works correctly
         email_last_sent_date = time.time()
-        queries.insert_email_last_sent_date(email_last_sent_date)
+        queries.save_email_last_sent_date(email_last_sent_date)
 
         self.assertEqual(format(email_last_sent_date, '.2f'),
                          format(constants.current_user['EmailLastSentDate'], '.2f'),
                          'Value should have been inserted into the database')
+
+    def test_insert_packets(self):
+        packets = [{'12-07-2016 22:23:03':
+                    ['/wp-content/themes/thekrazycouponlady_v2/assets/css/bootstrap.css.gzip?67068c?ver=1478190183560',
+                     'prod-cdn.thekrazycouponlady.com', 'http://thekrazycouponlady.com/']}]
+
+        queries.insert_packets(packets)
+
+        returned_packets = queries.get_packets()
+        self.assertEqual(returned_packets[0][1], '12-07-2016 22:23:03', 'Values should not have been'
+                                                                        ' modified in the database')
+        # skip the second row as that's simply the timezone that gets saved
+        self.assertEqual(returned_packets[0][3],
+                         '/wp-content/themes/thekrazycouponlady_v2/assets/css/bootstrap.css.gzip?67068c?ver=1478190183560',
+                         'Values should not have been modified in the database')
+        self.assertEqual(returned_packets[0][4], 'prod-cdn.thekrazycouponlady.com', 'Values should not have been'
+                                                                                    ' modified in the database')
+        self.assertEqual(returned_packets[0][5], 'http://thekrazycouponlady.com/', 'Values should not have been'
+                                                                                   ' modified in the database')
 
 
 if __name__ == '__main__':

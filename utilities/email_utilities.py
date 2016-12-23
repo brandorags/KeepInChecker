@@ -20,7 +20,6 @@ import time as t
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
-from security_utilities import decrypt
 from email.mime.text import MIMEText
 from constants import constants
 from database import queries
@@ -57,15 +56,13 @@ def send_scheduled_email():
     if has_scheduled_email_been_sent():
         return
 
-    sender_name = decrypt(constants.current_user['UserName'])
-    sender_email = decrypt(constants.current_user['UserEmail'])
+    sender_name = constants.current_user['UserName']
+    sender_email = constants.current_user['UserEmail']
     try:
-        sender_password = decrypt(constants.current_user['UserEmailPassword'])
+        sender_password = constants.current_user['UserEmailPassword']
     except:
-        # there's been times when the UserEmailPassword value needs to
-        # be doubly decrypted; as to why, I'm not sure yet
-        sender_password = decrypt(decrypt(constants.current_user['UserEmailPassword']))
-    recipients = decrypt(constants.current_user['PartnerEmails'])
+        sender_password = constants.current_user['UserEmailPassword']
+    recipients = constants.current_user['PartnerEmails']
 
     message = MIMEMultipart()
     message['From'] = sender_email
@@ -90,7 +87,7 @@ def set_date_last_email_was_sent():
     global date_last_email_was_sent
 
     date_last_email_was_sent = t.time()
-    queries.insert_email_last_sent_date(date_last_email_was_sent)
+    queries.save_email_last_sent_date(date_last_email_was_sent)
 
 
 def has_scheduled_email_been_sent():
@@ -139,8 +136,8 @@ def generate_body_text(sender_name):
     if packets:
         packet_data = ''
         for packet in packets:
-            packet_data += '\n' + decrypt(packet['DateReceived']) + ' ' + packet['Timezone'] + ' ' + \
-                           decrypt(packet['Get']) + ' ' + decrypt(packet['Host']) + ' ' + decrypt(packet['Referer'])
+            packet_data += '\n' + packet['DateReceived'] + ' ' + packet['Timezone'] + ' ' + \
+                           packet['Get'] + ' ' + packet['Host'] + ' ' + packet['Referer']
 
         email_body += str(len(packets)) + ' questionable sites were visited:\n'
         email_body += packet_data
