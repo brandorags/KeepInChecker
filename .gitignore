@@ -1,10 +1,2 @@
-.idea/
-venv/
-__pycache__/
-build/
-dist/
-constants/secret_key_production.txt
-*.pyc
-*.sqlite
-*.sqlite-journal
-*.orig
+.metadata/
+RemoteSystemsTempFiles/
