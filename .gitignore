@@ -2,5 +2,7 @@
 .recommenders/
 RemoteSystemsTempFiles/
 KeepInChecker/bin/
+KeepInChecker/.gradle/
+KeepInChecker/.settings/
 *.classpath
 *.project

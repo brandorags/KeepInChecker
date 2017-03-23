@@ -1,0 +1,15 @@
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java-library'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile 'org.pcap4j:pcap4j-core:1.7.0'
+	compile 'org.pcap4j:pcap4j-packetfactory-static:1.7.0'
+	compile 'org.xerial:sqlite-jdbc:3.16.1'		
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
