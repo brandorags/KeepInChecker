@@ -2,6 +2,10 @@ package keepinchecker.main;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.util.Base64;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.pcap4j.core.PcapHandle;
 import org.pcap4j.core.PcapNetworkInterface;
@@ -13,6 +17,7 @@ import com.sun.javafx.PlatformUtil;
 
 import keepinchecker.contstants.Contstants;
 import keepinchecker.database.DbSession;
+import keepinchecker.utility.SecurityUtilities;
 
 public class KeepInChecker {
 	
@@ -21,16 +26,26 @@ public class KeepInChecker {
 		initializeDatabaseConnection();
 		
 		// delete me!
-		InetAddress address = InetAddress.getByName("192.168.0.6");
-		PcapNetworkInterface networkInterface = Pcaps.getDevByAddress(address);
-		System.out.println(networkInterface.getName());
-		int snapLen = 65536;
-		PromiscuousMode mode = PromiscuousMode.PROMISCUOUS;
-		int timeout = 10000;
-		PcapHandle handle = networkInterface.openLive(snapLen, mode, timeout);
-		Packet packet = handle.getNextPacketEx();
-		handle.close();
-		System.out.println(packet.getPayload());
+//		InetAddress address = InetAddress.getByName("192.168.0.6");
+//		PcapNetworkInterface networkInterface = Pcaps.getDevByAddress(address);
+//		System.out.println(networkInterface.getName());
+//		int snapLen = 65536;
+//		PromiscuousMode mode = PromiscuousMode.PROMISCUOUS;
+//		int timeout = 5000;
+//		PcapHandle handle = networkInterface.openLive(snapLen, mode, timeout);
+//		Packet packet = handle.getNextPacketEx();
+//		handle.close();
+//		System.out.println(packet.getPayload());
+
+		byte[] value = SecurityUtilities.encrypt("I need to be encrypted, please!");
+		System.out.println(new String(value));
+		String decryptedValue = SecurityUtilities.decrypt(value);
+		System.out.println(decryptedValue);
+		
+		value = SecurityUtilities.encrypt(decryptedValue);
+		System.out.println(new String(value));
+		decryptedValue = SecurityUtilities.decrypt(value);
+		System.out.println(decryptedValue);
 	}
 	
 	private static void initializeDatabaseConnection() throws Exception {
