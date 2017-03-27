@@ -6,12 +6,14 @@ import com.sun.javafx.PlatformUtil;
 
 import keepinchecker.contstants.Contstants;
 import keepinchecker.database.DbSession;
+import keepinchecker.utility.EmailUtilities;
 
 public class KeepInChecker {
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println("Hello, world!");
 		initializeDatabaseConnection();
+		EmailUtilities.sendScheduledEmail();
 	}
 	
 	private static void initializeDatabaseConnection() throws Exception {
