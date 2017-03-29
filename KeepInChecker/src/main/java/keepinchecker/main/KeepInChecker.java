@@ -1,6 +1,6 @@
 package keepinchecker.main;
 
-import keepinchecker.contstants.Contstants;
+import keepinchecker.constants.Constants;
 import keepinchecker.database.DbSession;
 
 public class KeepInChecker {
@@ -10,7 +10,7 @@ public class KeepInChecker {
 	}
 	
 	private static void initializeDatabaseConnection() throws Exception {
-		DbSession dbSession = new DbSession(Contstants.DATABASE_PATH, false);
+		DbSession dbSession = new DbSession(Constants.DATABASE_PATH, false);
 		dbSession.createTablesIfNoneExist();
 		dbSession.commit();
 		dbSession.close();
