@@ -12,7 +12,7 @@ dependencies {
 	
 	// Simple Java Mail
 	compile 'org.simplejavamail:simple-java-mail:4.2.1'		
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	
+	// Use JUnit test framework
+	testImplementation 'junit:junit:4.12'
 }
