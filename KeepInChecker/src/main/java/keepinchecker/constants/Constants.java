@@ -1,4 +1,4 @@
-package keepinchecker.contstants;
+package keepinchecker.constants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.sun.javafx.PlatformUtil;
 
-public class Contstants {
+public class Constants {
 	
 	public static final List<String> OBJECTIONABLE_WORDS = new ArrayList<>(Arrays.asList("stackoverflow", "reddit",
 			"imgur", "awesome", "the"));
