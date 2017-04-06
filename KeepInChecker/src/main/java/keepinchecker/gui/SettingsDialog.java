@@ -1,92 +1,135 @@
 package keepinchecker.gui;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Button;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import net.miginfocom.swing.MigLayout;
 
 public class SettingsDialog {
 
-	protected Shell shell;
+	private JFrame dialogFrame;
 	
-	private Text nameField;
-	private Text emailField;
-	private Text emailPasswordField;
-	private Table partnersEmailsTable;
+	private JLabel nameLabel;
+	private JTextField nameTextField;
+	
+	private JLabel emailLabel;
+	private JTextField emailTextField;
+	
+	private JLabel passwordLabel;
+	private JPasswordField passwordField;
+	
+	private JLabel partnersEmailsLabel;
+	private JScrollPane scrollPane;
+	private JTable partnersEmailsTable;
+	
+	private JLabel emailFrequencyLabel;
+	private JComboBox<String> emailFrequencyCombo;
+	
+	private JButton saveButton;
+	private JButton cancelButton;
 
-	/**
-	 * Open the window.
-	 */
+	public SettingsDialog() {
+		initialize();
+	}
+	
 	public void open() {
-		Display display = Display.getDefault();
-		
-		createContents();
-		shell.open();
-		shell.layout();
-		
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+		dialogFrame.setVisible(true);
 	}
 
-	/**
-	 * Create contents of the window.
-	 */
-	protected void createContents() {
-		shell = new Shell();
-		shell.setSize(450, 300);
-		shell.setText("Settings");
+	private void initialize() {
+		dialogFrame = new JFrame();
+		dialogFrame.setTitle("Settings");
+		dialogFrame.setBounds(100, 100, 450, 300);
+		dialogFrame.getContentPane().setLayout(new MigLayout("", "[][][grow]", "[][][][grow][][]"));
 		
-		Label nameLabel = new Label(shell, SWT.NONE);
-		nameLabel.setBounds(10, 29, 59, 14);
-		nameLabel.setText("Name:");
+		nameLabel = new JLabel("Name:");
+		dialogFrame.getContentPane().add(nameLabel, "cell 0 0");
 		
-		nameField = new Text(shell, SWT.BORDER);
-		nameField.setBounds(117, 26, 323, 19);
+		nameTextField = new JTextField();
+		dialogFrame.getContentPane().add(nameTextField, "cell 2 0,growx");
+		nameTextField.setColumns(10);
 		
-		Label lblEmail = new Label(shell, SWT.NONE);
-		lblEmail.setBounds(10, 54, 59, 14);
-		lblEmail.setText("Email:");
+		emailLabel = new JLabel("Email:");
+		dialogFrame.getContentPane().add(emailLabel, "cell 0 1");
 		
-		emailField = new Text(shell, SWT.BORDER);
-		emailField.setBounds(117, 51, 323, 19);
+		emailTextField = new JTextField();
+		dialogFrame.getContentPane().add(emailTextField, "cell 2 1,growx");
+		emailTextField.setColumns(10);
 		
-		Label emailPasswordLabel = new Label(shell, SWT.NONE);
-		emailPasswordLabel.setBounds(10, 79, 101, 14);
-		emailPasswordLabel.setText("Email Password:");
+		passwordLabel = new JLabel("Password:");
+		dialogFrame.getContentPane().add(passwordLabel, "cell 0 2");
 		
-		emailPasswordField = new Text(shell, SWT.BORDER);
-		emailPasswordField.setBounds(117, 76, 323, 19);
+		passwordField = new JPasswordField();
+		dialogFrame.getContentPane().add(passwordField, "cell 2 2,growx");
 		
-		partnersEmailsTable = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		partnersEmailsTable.setBounds(117, 101, 323, 107);
-		partnersEmailsTable.setHeaderVisible(true);
-		partnersEmailsTable.setLinesVisible(true);
+		partnersEmailsLabel = new JLabel("Partners' Emails:");
+		dialogFrame.getContentPane().add(partnersEmailsLabel, "cell 0 3");
 		
-		Label partnersEmailsLabel = new Label(shell, SWT.NONE);
-		partnersEmailsLabel.setBounds(10, 147, 103, 14);
-		partnersEmailsLabel.setText("Partners' Emails:");
+		scrollPane = new JScrollPane();
+		dialogFrame.getContentPane().add(scrollPane, "cell 2 3,grow");
 		
-		Label emailFrequencyLabel = new Label(shell, SWT.NONE);
-		emailFrequencyLabel.setBounds(10, 222, 101, 19);
-		emailFrequencyLabel.setText("Email Frequency:");
+		partnersEmailsTable = new JTable(new PartnersEmailsTableModel());
+		scrollPane.setViewportView(partnersEmailsTable);
 		
-		Combo emailFrequencyCombo = new Combo(shell, SWT.NONE);
-		emailFrequencyCombo.setBounds(117, 219, 101, 31);
+		emailFrequencyLabel = new JLabel("Email Frequency:");
+		dialogFrame.getContentPane().add(emailFrequencyLabel, "cell 0 4");
 		
-		Button cancelButton = new Button(shell, SWT.NONE);
-		cancelButton.setBounds(346, 250, 94, 28);
-		cancelButton.setText("Cancel");
+		emailFrequencyCombo = new JComboBox<>();
+		emailFrequencyCombo.addItem("Daily");
+		emailFrequencyCombo.addItem("Weekly");
+		dialogFrame.getContentPane().add(emailFrequencyCombo, "cell 2 4,alignx left");
 		
-		Button saveButton = new Button(shell, SWT.NONE);
-		saveButton.setBounds(246, 250, 94, 28);
-		saveButton.setText("Save");
+		saveButton = new JButton("Save");
+		dialogFrame.getContentPane().add(saveButton, "flowx,cell 2 5");
+		
+		cancelButton = new JButton("Cancel");
+		dialogFrame.getContentPane().add(cancelButton, "cell 2 5");
 	}
 	
+    private class PartnersEmailsTableModel extends AbstractTableModel {
+    	
+		private static final long serialVersionUID = -3807071850727921483L;
+
+		private String[] columnNames = { "Email Addresses:" };
+		private String data[][] = new String[1][10];
+		
+		@Override
+		public int getRowCount() {
+		    return data.length;
+		}
+		
+		@Override
+		public int getColumnCount() {
+		    return columnNames.length;
+		}
+		
+		@Override
+		public String getColumnName(int column) {
+		    return columnNames[column];
+		}
+		
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+		    return data[rowIndex][columnIndex];
+		}
+		
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		    return true;
+		}
+		
+		@Override
+		public void setValueAt(Object value, int rowIndex, int columnIndex) {
+		    data[rowIndex][columnIndex] = value.toString();
+		    fireTableCellUpdated(rowIndex, columnIndex);
+		}
+	
+    }
+    
 }
