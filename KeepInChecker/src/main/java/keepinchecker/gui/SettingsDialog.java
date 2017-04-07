@@ -3,13 +3,19 @@ package keepinchecker.gui;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JTable;
+
 import net.miginfocom.swing.MigLayout;
+
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
 
 public class SettingsDialog {
 
@@ -45,6 +51,7 @@ public class SettingsDialog {
 	private void initialize() {
 		dialogFrame = new JFrame();
 		dialogFrame.setTitle("Settings");
+		dialogFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dialogFrame.setBounds(100, 100, 450, 300);
 		dialogFrame.getContentPane().setLayout(new MigLayout("", "[][][grow]", "[][][][grow][][]"));
 		
@@ -74,7 +81,8 @@ public class SettingsDialog {
 		scrollPane = new JScrollPane();
 		dialogFrame.getContentPane().add(scrollPane, "cell 2 3,grow");
 		
-		partnersEmailsTable = new JTable(new PartnersEmailsTableModel());
+		partnersEmailsTable = new JTable(new DefaultTableModel(new String[] { "Email Addresses:" }, 10));
+		((DefaultTableCellRenderer) partnersEmailsTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		scrollPane.setViewportView(partnersEmailsTable);
 		
 		emailFrequencyLabel = new JLabel("Email Frequency:");
@@ -86,50 +94,20 @@ public class SettingsDialog {
 		dialogFrame.getContentPane().add(emailFrequencyCombo, "cell 2 4,alignx left");
 		
 		saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialogFrame.dispatchEvent(new WindowEvent(dialogFrame, WindowEvent.WINDOW_CLOSING));
+			}
+		});
 		dialogFrame.getContentPane().add(saveButton, "flowx,cell 2 5");
 		
 		cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialogFrame.dispatchEvent(new WindowEvent(dialogFrame, WindowEvent.WINDOW_CLOSING));
+			}
+		});
 		dialogFrame.getContentPane().add(cancelButton, "cell 2 5");
 	}
 	
-    private class PartnersEmailsTableModel extends AbstractTableModel {
-    	
-		private static final long serialVersionUID = -3807071850727921483L;
-
-		private String[] columnNames = { "Email Addresses:" };
-		private String data[][] = new String[1][10];
-		
-		@Override
-		public int getRowCount() {
-		    return data.length;
-		}
-		
-		@Override
-		public int getColumnCount() {
-		    return columnNames.length;
-		}
-		
-		@Override
-		public String getColumnName(int column) {
-		    return columnNames[column];
-		}
-		
-		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
-		    return data[rowIndex][columnIndex];
-		}
-		
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-		    return true;
-		}
-		
-		@Override
-		public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		    data[rowIndex][columnIndex] = value.toString();
-		    fireTableCellUpdated(rowIndex, columnIndex);
-		}
-	
-    }
-    
 }
