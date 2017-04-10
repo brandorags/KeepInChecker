@@ -1,0 +1,21 @@
+apply plugin: 'java-library'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	// pcap4j
+	compile 'org.pcap4j:pcap4j-core:1.7.0'
+	compile 'org.pcap4j:pcap4j-packetfactory-static:1.7.0'
+	compile 'org.xerial:sqlite-jdbc:3.16.1'
+	
+	// Simple Java Mail
+	compile 'org.simplejavamail:simple-java-mail:4.2.1'
+	
+	// SystemTray
+	compile 'com.dorkbox:SystemTray:3.1'	
+	
+	// Use JUnit test framework
+	testImplementation 'junit:junit:4.12'
+}
