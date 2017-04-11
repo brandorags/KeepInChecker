@@ -1,5 +1,5 @@
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the Pcap4J code.                                  ==
 =========================================================================
@@ -9,7 +9,7 @@ Pcap4J is distributed under the MIT license.
 Copyright (c) 2011-2015 Pcap4J.org
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the SQLite JDBC Driver code.                      ==
 =========================================================================
@@ -19,7 +19,7 @@ SQLite JDBC Driver is distributed under the Apache v2.0 license.
 Copyright (c) 2007 David Crawshaw <david@zentus.com> and xerial.org
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the Simple Java Mail code.                        ==
 =========================================================================
@@ -29,7 +29,7 @@ Simple Java Mail is distributed under the Apache v2.0 license.
 Copyright (c) 2008-2017 bennybottema.com
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the SystemTray code.                              ==
 =========================================================================
@@ -39,7 +39,7 @@ SystemTray is distributed under the Apache v2.0 license.
 Copyright (c) 2014 Dorkbox, LLC
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the Logback code.                                 ==
 =========================================================================
@@ -49,7 +49,7 @@ Logback is distributed under the EPL v1.0 and the LGPL 2.1 licenses.
 Copyright (c) 1999-2017 QOS.ch
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the Javassist code.                               ==
 =========================================================================
@@ -59,17 +59,17 @@ Javassist is distributed under the Apache v2.0 license.
 Copyright (c) 1999-2017 Shigeru Chiba
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the MiGLayout code.                               ==
 =========================================================================
 
-Javassist is distributed under the BSD license.
+MiGLayout is distributed under the BSD license.
 
 Copyright (c) MiG InfoCom AB
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the SLF4J code.                                   ==
 =========================================================================
@@ -79,7 +79,7 @@ SLF4J is distributed under the MIT license.
 Copyright (c) 2004-2017 QOS.ch
 
 =========================================================================
-==  NOTICE file corresponding to the section 4(d) of                   ==
+==  NOTICE file corresponding to section 4(d) of                       ==
 ==  the Apache License, Version 2.0,                                   ==
 ==  in this case for the JNA code.                                     ==
 =========================================================================
