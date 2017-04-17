@@ -26,6 +26,8 @@ import java.util.Map;
 
 import com.sun.javafx.PlatformUtil;
 
+import keepinchecker.database.entity.User;
+
 public class Constants {
 	
 	public static final List<String> OBJECTIONABLE_WORDS = new ArrayList<>(Arrays.asList("stackoverflow", "reddit",
@@ -35,7 +37,7 @@ public class Constants {
 	
 	public static final Map<String, String> THIRD_PARTY_LIBRARIES_MAP = new HashMap<>();
 	
-	public static Object CURRENT_USER = null;
+	public static User CURRENT_USER = null;
 
 	public static String DATABASE_PATH;
 	

@@ -19,6 +19,7 @@ package keepinchecker.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -35,15 +36,13 @@ public class DbSession {
 	 * Constructor for DbSession
 	 * 
 	 * @param dbPath - the path to the database
-	 * @param autoCommit - determines whether
-	 * or not to auto commit the database transaction
 	 * @throws Exception
 	 */
-	public DbSession(String dbPath, boolean autoCommit) throws Exception {
-		Class.forName("org.sqlite.JDBC");
+	public DbSession(String dbPath) throws Exception {
+		Class.forName("org.sqlite.JDBC");		
 		
 		connection = DriverManager.getConnection(dbPath);
-		connection.setAutoCommit(autoCommit);
+		connection.setAutoCommit(false);
 		
 		statement = connection.createStatement();
 	}
@@ -55,6 +54,20 @@ public class DbSession {
 	
 	public void close() throws SQLException {
 		connection.close();
+	}
+	
+	public void commitAndClose() throws SQLException {
+		statement.close();
+		connection.commit();
+		connection.close();
+	}
+	
+	public ResultSet find(String sql) throws SQLException {
+		return statement.executeQuery(sql);
+	}
+	
+	public void execute(String sql) throws SQLException {
+		statement.executeUpdate(sql);
 	}
 	
 	public void createTablesIfNoneExist() throws SQLException {

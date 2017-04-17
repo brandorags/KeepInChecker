@@ -19,22 +19,31 @@ package keepinchecker.main;
 
 import keepinchecker.constants.Constants;
 import keepinchecker.database.DbSession;
+import keepinchecker.database.Queries;
+import keepinchecker.database.entity.User;
 import keepinchecker.gui.KeepInCheckerSystemTray;
-import keepinchecker.gui.SettingsDialog;
 
 public class KeepInChecker {
 	
 	public static void main(String[] args) throws Exception {
 		initializeDatabaseConnection();
+		initializeUser();
 		KeepInCheckerSystemTray systemTray = new KeepInCheckerSystemTray();
 		systemTray.run();
 	}
 	
 	private static void initializeDatabaseConnection() throws Exception {
-		DbSession dbSession = new DbSession(Constants.DATABASE_PATH, false);
+		DbSession dbSession = new DbSession(Constants.DATABASE_PATH);
 		dbSession.createTablesIfNoneExist();
 		dbSession.commit();
 		dbSession.close();
+	}
+	
+	private static void initializeUser() throws Exception {
+		User user = Queries.getUser();
+		if (user != null) {
+			Constants.CURRENT_USER = user;
+		}
 	}
 
 }
