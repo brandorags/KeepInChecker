@@ -22,6 +22,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
+import keepinchecker.constants.Constants;
+import keepinchecker.database.Queries;
+import keepinchecker.database.entity.User;
+
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
@@ -32,9 +37,14 @@ import net.miginfocom.swing.MigLayout;
 
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.event.ActionEvent;
 
 public class SettingsDialog {
+	
+	private static final String USER_EMAIL_FREQUENCY_DAILY = "Daily";
+	private static final String USER_EMAIL_FREQUENCY_WEEKLY = "Weekly";
 
 	private JFrame dialogFrame;
 	
@@ -56,8 +66,22 @@ public class SettingsDialog {
 	
 	private JButton saveButton;
 	private JButton cancelButton;
+	
+	private final User user;
 
 	public SettingsDialog() {
+		if (Constants.CURRENT_USER != null) {
+			user = Constants.CURRENT_USER;
+		} else {
+			user = new User();
+			
+			user.setUserName("");
+			user.setUserEmail("");
+			user.setUserEmailPassword("");
+			user.setPartnerEmails(new ArrayList<>());
+			user.setEmailFrequency("");
+		}
+
 		initialize();
 	}
 	
@@ -78,18 +102,21 @@ public class SettingsDialog {
 		nameTextField = new JTextField();
 		dialogFrame.getContentPane().add(nameTextField, "cell 2 0,growx");
 		nameTextField.setColumns(10);
+		nameTextField.setText(user.getUserName());
 		
 		emailLabel = new JLabel("Email:");
 		dialogFrame.getContentPane().add(emailLabel, "cell 0 1");
 		
 		emailTextField = new JTextField();
-		dialogFrame.getContentPane().add(emailTextField, "cell 2 1,growx");
 		emailTextField.setColumns(10);
+		emailTextField.setText(user.getUserEmail());
+		dialogFrame.getContentPane().add(emailTextField, "cell 2 1,growx");
 		
 		passwordLabel = new JLabel("Password:");
 		dialogFrame.getContentPane().add(passwordLabel, "cell 0 2");
 		
 		passwordField = new JPasswordField();
+		passwordField.setText(user.getUserEmailPassword());
 		dialogFrame.getContentPane().add(passwordField, "cell 2 2,growx");
 		
 		partnersEmailsLabel = new JLabel("Partners' Emails:");
@@ -106,13 +133,24 @@ public class SettingsDialog {
 		dialogFrame.getContentPane().add(emailFrequencyLabel, "cell 0 4");
 		
 		emailFrequencyCombo = new JComboBox<>();
-		emailFrequencyCombo.addItem("Daily");
-		emailFrequencyCombo.addItem("Weekly");
+		emailFrequencyCombo.addItem(USER_EMAIL_FREQUENCY_DAILY);
+		emailFrequencyCombo.addItem(USER_EMAIL_FREQUENCY_WEEKLY);
+		emailFrequencyCombo.setSelectedItem(user.getEmailFrequency());
 		dialogFrame.getContentPane().add(emailFrequencyCombo, "cell 2 4,alignx left");
 		
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String userName = nameTextField.getText();
+				String userEmail = emailTextField.getText();
+				String userEmailPassword = passwordField.getSelectedText();
+				String emailFrequency = emailFrequencyCombo.getSelectedItem().toString();
+				try {
+					Queries.saveUserData(userName, userEmail, userEmailPassword, Arrays.asList("test"), emailFrequency);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				
 				dialogFrame.dispatchEvent(new WindowEvent(dialogFrame, WindowEvent.WINDOW_CLOSING));
 			}
 		});
