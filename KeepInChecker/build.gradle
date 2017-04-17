@@ -1,6 +1,8 @@
 apply plugin: 'java-library'
-
 apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'keepinchecker.main.KeepInChecker'
 
 repositories {
     mavenCentral()
@@ -18,6 +20,10 @@ dependencies {
 	// SystemTray
 	compile 'com.dorkbox:SystemTray:3.1'	
 	
-	// Use JUnit test framework
-	testImplementation 'junit:junit:4.12'
+	compile files('../KeepInCheckerJARs/miglayout15-swing.jar')
+}
+
+sourceSets.main.resources { 
+	srcDirs = ['src/main/java']
+	exclude '**/*.java' 
 }

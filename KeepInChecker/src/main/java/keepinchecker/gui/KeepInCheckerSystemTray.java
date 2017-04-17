@@ -19,7 +19,6 @@ package keepinchecker.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import dorkbox.systemTray.Menu;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.Separator;
@@ -44,7 +43,7 @@ public class KeepInCheckerSystemTray {
 			throw new RuntimeException("An error occurred while attempting to open the system tray.");
 		}		
 		systemTray.setTooltip("KeepInChecker");
-		systemTray.setImage(KeepInCheckerSystemTray.class.getResource("chevron-up.png"));
+		systemTray.setImage(getClass().getResource("images/chevron-up.png"));
 		
 		// load menu
 		menu = systemTray.getMenu();
