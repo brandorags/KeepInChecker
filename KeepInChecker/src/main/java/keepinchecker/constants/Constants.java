@@ -37,7 +37,7 @@ public class Constants {
 	
 	public static final Map<String, String> THIRD_PARTY_LIBRARIES_MAP = new HashMap<>();
 	
-	public static User CURRENT_USER = null;
+	public static User USER = null;
 
 	public static String DATABASE_PATH;
 	

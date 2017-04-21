@@ -20,6 +20,10 @@ dependencies {
 	// SystemTray
 	compile 'com.dorkbox:SystemTray:3.1'	
 	
+	// Apache Commons Lang
+	compile 'org.apache.commons:commons-lang3:3.5'
+
+	// MiGLayout
 	compile files('../KeepInCheckerJARs/miglayout15-swing.jar')
 }
 
