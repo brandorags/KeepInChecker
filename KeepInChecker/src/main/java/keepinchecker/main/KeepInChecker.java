@@ -42,7 +42,7 @@ public class KeepInChecker {
 	private static void initializeUser() throws Exception {
 		User user = Queries.getUser();
 		if (user != null) {
-			Constants.CURRENT_USER = user;
+			Constants.USER = user;
 		}
 	}
 

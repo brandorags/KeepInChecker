@@ -39,6 +39,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class SettingsDialog {
@@ -67,14 +68,16 @@ public class SettingsDialog {
 	private JButton saveButton;
 	private JButton cancelButton;
 	
-	private final User user;
+	private final User user = new User();
 
 	public SettingsDialog() {
-		if (Constants.CURRENT_USER != null) {
-			user = Constants.CURRENT_USER;
-		} else {
-			user = new User();
-			
+		if (Constants.USER != null) {
+			user.setUserName(Constants.USER.getUserName());
+			user.setUserEmail(Constants.USER.getUserEmail());
+			user.setUserEmailPassword(Constants.USER.getUserEmailPassword());
+			user.setPartnerEmails(Constants.USER.getPartnerEmails());
+			user.setEmailFrequency(Constants.USER.getEmailFrequency());
+		} else {			
 			user.setUserName("");
 			user.setUserEmail("");
 			user.setUserEmailPassword("");
@@ -127,6 +130,10 @@ public class SettingsDialog {
 		
 		partnersEmailsTable = new JTable(new DefaultTableModel(new String[] { "Email Addresses:" }, 10));
 		((DefaultTableCellRenderer) partnersEmailsTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		for (int i = 0; i < user.getPartnerEmails().size(); i++) {
+			String partnerEmail = user.getPartnerEmails().get(i);
+			partnersEmailsTable.getModel().setValueAt(partnerEmail, i, 0);
+		}
 		scrollPane.setViewportView(partnersEmailsTable);
 		
 		emailFrequencyLabel = new JLabel("Email Frequency:");
@@ -143,10 +150,28 @@ public class SettingsDialog {
 			public void actionPerformed(ActionEvent e) {
 				String userName = nameTextField.getText();
 				String userEmail = emailTextField.getText();
-				String userEmailPassword = passwordField.getSelectedText();
+				String userEmailPassword = new String(passwordField.getPassword());
 				String emailFrequency = emailFrequencyCombo.getSelectedItem().toString();
+				List<String> partnerEmails = new ArrayList<>();
+				for (int i = 0; i < partnersEmailsTable.getModel().getRowCount(); i++) {
+					try {
+						String partnerEmail = partnersEmailsTable.getModel().getValueAt(i, 0).toString();
+						if (partnerEmail != null) {						
+							partnerEmails.add(partnerEmail);
+						}
+					} catch (Exception ex) {
+						// it's an empty cell; keep going
+						continue;
+					}
+				}
+				
 				try {
-					Queries.saveUserData(userName, userEmail, userEmailPassword, Arrays.asList("test"), emailFrequency);
+					user.setUserName(userName);
+					user.setUserEmail(userEmail);
+					user.setUserEmailPassword(userEmailPassword);
+					user.setPartnerEmails(partnerEmails);
+					user.setEmailFrequency(emailFrequency);
+					Queries.saveUser(user);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
