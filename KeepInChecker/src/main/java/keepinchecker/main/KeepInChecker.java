@@ -22,21 +22,21 @@ import keepinchecker.database.DbSession;
 import keepinchecker.database.Queries;
 import keepinchecker.database.entity.User;
 import keepinchecker.gui.KeepInCheckerSystemTray;
+import keepinchecker.network.PacketSniffer;
 
 public class KeepInChecker {
 	
 	public static void main(String[] args) throws Exception {
 		initializeDatabaseConnection();
 		initializeUser();
-		KeepInCheckerSystemTray systemTray = new KeepInCheckerSystemTray();
-		systemTray.run();
+		recordNetworkTraffic();
+		launchSystemTray();
 	}
 	
 	private static void initializeDatabaseConnection() throws Exception {
 		DbSession dbSession = new DbSession(Constants.DATABASE_PATH);
 		dbSession.createTablesIfNoneExist();
-		dbSession.commit();
-		dbSession.close();
+		dbSession.commitAndClose();
 	}
 	
 	private static void initializeUser() throws Exception {
@@ -44,6 +44,16 @@ public class KeepInChecker {
 		if (user != null) {
 			Constants.USER = user;
 		}
+	}
+	
+	private static void recordNetworkTraffic() {
+		Thread snifferThread = new Thread(new PacketSniffer());
+		snifferThread.start();
+	}
+	
+	private static void launchSystemTray() {
+		KeepInCheckerSystemTray systemTray = new KeepInCheckerSystemTray();
+		systemTray.run();
 	}
 
 }
