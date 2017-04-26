@@ -17,11 +17,13 @@
 
 package keepinchecker.network;
 
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.pcap4j.core.BpfProgram.BpfCompileMode;
 import org.pcap4j.core.PacketListener;
 import org.pcap4j.core.PcapAddress;
 import org.pcap4j.core.PcapHandle;
@@ -30,12 +32,12 @@ import org.pcap4j.core.PcapNativeException;
 import org.pcap4j.core.PcapNetworkInterface;
 import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
 import org.pcap4j.core.Pcaps;
-import org.pcap4j.packet.IpV4Packet.IpV4Header;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.util.ByteArrays;
-import org.pcap4j.util.NifSelector;
 
 public class PacketSniffer implements Runnable {
+	
+	private static Map<Timestamp, String> packetMap = new HashMap<>();
 	
 	@Override
 	public void run() {
@@ -54,7 +56,8 @@ public class PacketSniffer implements Runnable {
 	    	
 	    	@Override
 	    	public void gotPacket(Packet packet) {
-	    		printPacket(packet, handle);
+//	    		printPacket(packet, handle);
+	    		storePacket(packet, handle);
 	    	}
 	    };
 
@@ -84,6 +87,11 @@ public class PacketSniffer implements Runnable {
 		
 		return networkInterface;
 	} 
+	
+	private static void storePacket(Packet packet, PcapHandle handle) {
+		String packetString = PacketParser.convertToHumanReadableFormat(packet);
+		packetMap.put(handle.getTimestamp(), packetString);
+	}
 	
 	private static void printPacket(Packet packet, PcapHandle ph) {
 		StringBuilder sb = new StringBuilder();

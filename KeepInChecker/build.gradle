@@ -25,6 +25,9 @@ dependencies {
 
 	// MiGLayout
 	compile files('../KeepInCheckerJARs/miglayout15-swing.jar')
+	
+	// JUnit
+	testCompile 'junit:junit:4.12'
 }
 
 sourceSets.main.resources { 
