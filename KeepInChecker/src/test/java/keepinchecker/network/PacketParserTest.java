@@ -6,8 +6,8 @@ import org.junit.Test;
 
 public class PacketParserTest {
 	
-	private String packetOutput = "GET / HTTP/1.1\n" +
-			"Host: brandonragsdale.com\n" +
+	private String packetString = "GET / HTTP/1.1\n" +
+			"Host: example.com\n" +
 			"Connection: keep-alive\n" +
 			"Cache-Control: max-age=0\n" +
 			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" +
@@ -20,8 +20,14 @@ public class PacketParserTest {
 	
 	@Test
 	public void testParseGet() throws Exception {
-		String getValue = PacketParser.parse(PacketParser.GET, packetOutput);
+		String getValue = PacketParser.parse(PacketParser.GET, packetString);
 		assertEquals("/", getValue);
+	}
+	
+	@Test
+	public void testParseHost() throws Exception {
+		String hostValue = PacketParser.parse(PacketParser.HOST, packetString);
+		assertEquals("example.com", hostValue);
 	}
 	
 }
