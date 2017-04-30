@@ -1,12 +1,16 @@
 package keepinchecker.database;
 
 import java.sql.ResultSet;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import keepinchecker.constants.Constants;
 import keepinchecker.database.entity.User;
+import keepinchecker.network.KeepInCheckerPacket;
 
 public class Queries {
 	
@@ -105,6 +109,26 @@ public class Queries {
 		session.commitAndClose();
 		
 		return user;
+	}
+	
+	public static void savePackets(List<KeepInCheckerPacket> packets) throws Exception {
+		DbSession session = new DbSession(Constants.DATABASE_PATH);
+		ZoneId currentTimezone = ZonedDateTime.now().getZone();
+		
+		for (KeepInCheckerPacket packet : packets) {
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO Packet (DateReceived, Timezone, Get, Host, Referer) ");
+			sql.append("VALUES(");
+			sql.append(packet.getTimestamp() + ", ");
+			sql.append("'" + currentTimezone.getId() + "', ");
+			sql.append("'" + packet.getGetValue() + "', ");
+			sql.append("'" + packet.getHostValue() + "', ");
+			sql.append("'" + packet.getRefererValue() + "')");
+			
+			session.execute(sql.toString());
+		}
+		
+		session.commitAndClose();
 	}
 
 }

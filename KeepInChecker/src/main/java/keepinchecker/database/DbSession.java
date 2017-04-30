@@ -75,11 +75,11 @@ public class DbSession {
 
 		builder.append("CREATE TABLE IF NOT EXISTS \"Packet\" (");
 		builder.append("`PacketId` INTEGER NOT NULL,");
-		builder.append("`DateReceived` TEXT NOT NULL,");
+		builder.append("`DateReceived` INTEGER NOT NULL,");
 		builder.append("`Timezone` TEXT,");
 		builder.append("`Get` TEXT,");
 		builder.append("`Host` TEXT,");
-		builder.append("`Referrer` TEXT,");
+		builder.append("`Referer` TEXT,");
 		builder.append("PRIMARY KEY(PacketId))");
 		statement.executeUpdate(builder.toString());
 		
@@ -91,7 +91,7 @@ public class DbSession {
 		builder.append("`UserEmailPassword` TEXT NOT NULL,");
 		builder.append("`PartnerEmails` TEXT NOT NULL,");
 		builder.append("`EmailFrequency` TEXT NOT NULL,");
-		builder.append("`EmailLastSentDate` REAL,");
+		builder.append("`EmailLastSentDate` INTEGER,");
 		builder.append("PRIMARY KEY(UserId))");
 		statement.executeUpdate(builder.toString());
 	}

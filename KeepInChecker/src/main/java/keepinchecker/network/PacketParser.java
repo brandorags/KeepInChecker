@@ -16,7 +16,7 @@ public class PacketParser {
 		String value = "";
 
 		if (!StringUtils.contains(packet, keyword)) {
-			return "";
+			return value;
 		}
 
 		String[] packetSplitOnNewline = packet.split("\n");
