@@ -18,12 +18,12 @@
 package keepinchecker.network;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.DatatypeConverter;
-
+import org.apache.commons.lang3.StringUtils;
 import org.pcap4j.core.PacketListener;
 import org.pcap4j.core.PcapAddress;
 import org.pcap4j.core.PcapHandle;
@@ -33,38 +33,39 @@ import org.pcap4j.core.PcapNetworkInterface;
 import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
 import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
-import org.pcap4j.util.ByteArrays;
+
+import keepinchecker.constants.Constants;
+import keepinchecker.database.Queries;
 
 public class PacketSniffer implements Runnable {
 	
-	private static Map<Timestamp, String> packetMap = new HashMap<>();
+	private Map<Timestamp, Packet> packetMap = new HashMap<>();
 	
 	@Override
 	public void run() {
 		try {
-			sniff_packets();
+			while (true) {	
+				Thread.sleep(10000);
+				
+				sniff_packets();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private static void sniff_packets() throws Exception {
+	private void sniff_packets() throws Exception {
 		PcapNetworkInterface networkInterface = getNetworkInterface();
 	    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.PROMISCUOUS, 5000);
 
-	    PacketListener listener = new PacketListener() {
-	    	
-	    	@Override
-	    	public void gotPacket(Packet packet) {
-//	    		printPacket(packet, handle);
-	    		storePacket(packet, handle);
-	    	}
-	    };
-
-	    handle.loop(500, listener);
+	    handle.loop(2000, new KeepInCheckerPacketListener(handle));
+	    
+	    sendPacketsToDatabase(packetMap);
+	    
+	    packetMap.clear();
 	}
 	
-	private static PcapNetworkInterface getNetworkInterface() throws PcapNativeException {
+	private PcapNetworkInterface getNetworkInterface() throws PcapNativeException {
 		PcapNetworkInterface networkInterface = null;
 		List<PcapNetworkInterface> networkInterfaces = Pcaps.findAllDevs();
 		if (networkInterfaces.isEmpty()) {
@@ -81,6 +82,7 @@ public class PacketSniffer implements Runnable {
 				if (address instanceof PcapIpV4Address &&
 						!address.getAddress().isLoopbackAddress()) {	
 					networkInterface = nif;
+					break;
 				}
 			}
 		}
@@ -88,34 +90,62 @@ public class PacketSniffer implements Runnable {
 		return networkInterface;
 	} 
 	
-	private static void storePacket(Packet packet, PcapHandle handle) {
-		String packetString = PacketParser.convertToHumanReadableFormat(packet);
-		packetMap.put(handle.getTimestamp(), packetString);
+	private void storePacket(Packet packet, PcapHandle handle) {
+		packetMap.put(handle.getTimestamp(), packet);
 	}
 	
-	private static void printPacket(Packet packet, PcapHandle ph) {
-		StringBuilder sb = new StringBuilder();
-	    sb.append("A packet captured at ")
-	    .append(ph.getTimestamp())
-	    .append(":");
-//	    System.out.println(sb);
-//	    System.out.println(packet);
-	    String hex = ByteArrays.toHexString(packet.getRawData(), "");
-//	    System.out.println();
-	    StringBuilder output = new StringBuilder();
-	    for (int i = 0; i < hex.length(); i+=2) {
-	        String str = hex.substring(i, i+2);
-	        output.append((char)Integer.parseInt(str, 16));
-	    }
-	    System.out.println(output.toString());
-	    if (output.toString().contains("brandon")) {
-	    	System.out.println("---------------------- LOOK BELOW ------------------------");
-//	    	System.out.println(hex);
-	    	System.out.println("For loop: " + output.toString());
-	    	System.out.println("DatatypeConverter: " + new String(DatatypeConverter.parseHexBinary(ByteArrays.toHexString(packet.getRawData(), ""))));
-	    	System.out.println("---------------------- LOOK ABOVE ------------------------");	    	
-	    } else {
-	    }
+	private void sendPacketsToDatabase(Map<Timestamp, Packet> packetMap) throws Exception {
+		List<KeepInCheckerPacket> objectionablePackets = new ArrayList<>();
+		
+		for (Map.Entry<Timestamp, Packet> entry : packetMap.entrySet()) {
+			Timestamp packetTime = entry.getKey();
+			String packetString = PacketParser.convertToHumanReadableFormat(entry.getValue());
+			
+			for (String objectionableWord : Constants.OBJECTIONABLE_WORDS) {
+				if (StringUtils.contains(packetString, objectionableWord)) {
+					KeepInCheckerPacket packet = new KeepInCheckerPacket();
+					packet.setTimestamp(packetTime.getTime());
+					packet.setGetValue(PacketParser.parse(PacketParser.GET, packetString));
+					packet.setHostValue(PacketParser.parse(PacketParser.HOST, packetString));
+					packet.setRefererValue(PacketParser.parse(PacketParser.REFERER, packetString));
+					
+					if (!areGetHostAndRefererValuesEmpty(packet)) {						
+						objectionablePackets.add(packet);
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		if (!objectionablePackets.isEmpty()) {			
+			Queries.savePackets(objectionablePackets);
+		}
+	}
+	
+	private boolean areGetHostAndRefererValuesEmpty(KeepInCheckerPacket packet) {
+		if (StringUtils.isEmpty(packet.getGetValue()) &&
+				StringUtils.isEmpty(packet.getHostValue()) &&
+				StringUtils.isEmpty(packet.getRefererValue())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private class KeepInCheckerPacketListener implements PacketListener {
+		
+		private PcapHandle handle;
+		
+		public KeepInCheckerPacketListener(PcapHandle handle) {
+			this.handle = handle;
+		}
+
+		@Override
+		public void gotPacket(Packet packet) {
+			storePacket(packet, handle);
+		}
+		
 	}
 
 }
