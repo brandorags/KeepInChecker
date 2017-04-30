@@ -37,24 +37,11 @@ import org.pcap4j.packet.Packet;
 import keepinchecker.constants.Constants;
 import keepinchecker.database.Queries;
 
-public class PacketSniffer implements Runnable {
+public class PacketSniffer {
 	
 	private Map<Timestamp, Packet> packetMap = new HashMap<>();
 	
-	@Override
-	public void run() {
-		try {
-			while (true) {	
-				Thread.sleep(10000);
-				
-				sniff_packets();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void sniff_packets() throws Exception {
+	public void sniffPackets() throws Exception {
 		PcapNetworkInterface networkInterface = getNetworkInterface();
 	    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.PROMISCUOUS, 5000);
 

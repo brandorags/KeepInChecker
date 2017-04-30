@@ -22,14 +22,13 @@ import keepinchecker.database.DbSession;
 import keepinchecker.database.Queries;
 import keepinchecker.database.entity.User;
 import keepinchecker.gui.KeepInCheckerSystemTray;
-import keepinchecker.network.PacketSniffer;
 
 public class KeepInChecker {
 	
 	public static void main(String[] args) throws Exception {
 		initializeDatabaseConnection();
 		initializeUser();
-		recordNetworkTraffic();
+		launchBackend();
 		launchSystemTray();
 	}
 	
@@ -46,9 +45,9 @@ public class KeepInChecker {
 		}
 	}
 	
-	private static void recordNetworkTraffic() {
-		Thread snifferThread = new Thread(new PacketSniffer());
-		snifferThread.start();
+	private static void launchBackend() {
+		Thread backendThread = new Thread(new KeepInCheckerBackend());
+		backendThread.start();
 	}
 	
 	private static void launchSystemTray() {
