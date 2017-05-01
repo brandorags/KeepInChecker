@@ -12,6 +12,8 @@ dependencies {
 	// pcap4j
 	compile 'org.pcap4j:pcap4j-core:1.7.0'
 	compile 'org.pcap4j:pcap4j-packetfactory-static:1.7.0'
+	
+	// SQLite JDBC Driver
 	compile 'org.xerial:sqlite-jdbc:3.16.1'
 	
 	// Simple Java Mail
@@ -24,7 +26,7 @@ dependencies {
 	compile 'org.apache.commons:commons-lang3:3.5'
 
 	// MiGLayout
-	compile files('../KeepInCheckerJARs/miglayout15-swing.jar')
+	compile 'com.miglayout:miglayout:3.7.4'
 	
 	// JUnit
 	testCompile 'junit:junit:4.12'
