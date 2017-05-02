@@ -18,6 +18,7 @@
 package keepinchecker.main;
 
 import keepinchecker.network.PacketSniffer;
+import keepinchecker.utility.EmailUtilities;
 
 public class KeepInCheckerBackend implements Runnable {
 
@@ -25,10 +26,12 @@ public class KeepInCheckerBackend implements Runnable {
 	public void run() {
 		try {
 			while (true) {
-				Thread.sleep(10000);
+//				Thread.sleep(10000);
+//				
+//				PacketSniffer packetSniffer = new PacketSniffer();
+//				packetSniffer.sniffPackets();	
 				
-				PacketSniffer packetSniffer = new PacketSniffer();
-				packetSniffer.sniffPackets();	
+				EmailUtilities.sendScheduledEmail();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

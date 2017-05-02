@@ -17,15 +17,38 @@
 
 package keepinchecker.utility;
 
+import java.util.Date;
+
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.simplejavamail.email.Email;
 import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
-public class EmailUtilities {
+import keepinchecker.constants.Constants;
+import keepinchecker.database.Queries;
 
-	public static void sendScheduledEmail() {
+public class EmailUtilities {
+	
+	private static long emailLastSentDate;
+	
+	static {
+		try {
+			emailLastSentDate = Queries.getEmailLastSentDate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void sendScheduledEmail() throws Exception {
+		if (Constants.USER == null) {
+			return;
+		}
+		
+		if (emailLastSentDate == 0) {
+			Queries.saveEmailLastSentDate(new Date().getTime());
+		}
+		
 	    final Email email = new Email();
 	    email.setFromAddress("Sender's Name", "username@gmail.com");
 	    email.addRecipient("Recipient's Name", "username@example.com", RecipientType.TO);

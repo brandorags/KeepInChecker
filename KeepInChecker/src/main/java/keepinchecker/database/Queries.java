@@ -105,10 +105,39 @@ public class Queries {
 			user.setUserEmailPassword(set.getString("UserEmailPassword"));
 			user.setPartnerEmails(Arrays.asList(set.getString("PartnerEmails").split(",")));
 			user.setEmailFrequency(set.getString("EmailFrequency"));
+			user.setEmailLastSentDate(set.getLong("EmailLastSentDate"));
 		}
 		session.commitAndClose();
 		
 		return user;
+	}
+	
+	public static long getEmailLastSentDate() throws Exception {
+		long lastEmailSentDate = 0;
+		
+		if (Constants.USER != null) {
+			DbSession session = new DbSession(Constants.DATABASE_PATH);
+			ResultSet set = session.find("SELECT EmailLastSentDate FROM User");
+			if (set.next()) {
+				lastEmailSentDate = set.getLong("EmailLastSentDate");
+			}
+			
+			session.close();
+		}
+		
+		return lastEmailSentDate;
+	}
+	
+	public static void saveEmailLastSentDate(long date) throws Exception {
+		if (Constants.USER == null) {
+			return;
+		}
+		
+		DbSession session = new DbSession(Constants.DATABASE_PATH);
+		session.execute("UPDATE User SET EmailLastSentDate = " + date);
+		session.commitAndClose();
+		
+		Constants.USER = getUser();
 	}
 	
 	public static void savePackets(List<KeepInCheckerPacket> packets) throws Exception {

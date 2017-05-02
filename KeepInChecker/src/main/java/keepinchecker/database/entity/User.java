@@ -12,6 +12,7 @@ public class User implements Serializable {
 	private String userEmailPassword;
 	private List<String> partnerEmails;
 	private String emailFrequency;
+	private long emailLastSentDate;
 	
 	public User() {
 		
@@ -55,6 +56,14 @@ public class User implements Serializable {
 	
 	public void setEmailFrequency(String emailFrequency) {
 		this.emailFrequency = emailFrequency;
+	}
+
+	public long getEmailLastSentDate() {
+		return emailLastSentDate;
+	}
+
+	public void setEmailLastSentDate(long emailLastSentDate) {
+		this.emailLastSentDate = emailLastSentDate;
 	}
 
 }
