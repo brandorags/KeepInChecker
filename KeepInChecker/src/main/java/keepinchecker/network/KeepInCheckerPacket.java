@@ -10,11 +10,11 @@ public class KeepInCheckerPacket {
 	public long getTimestamp() {
 		return timestamp;
 	}
-	
-	public void setTimestamp(Long timestamp) {
+
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	
+
 	public String getGetValue() {
 		return getValue;
 	}
