@@ -44,9 +44,6 @@ import java.awt.event.ActionEvent;
 
 public class SettingsDialog {
 	
-	private static final String USER_EMAIL_FREQUENCY_DAILY = "Daily";
-	private static final String USER_EMAIL_FREQUENCY_WEEKLY = "Weekly";
-
 	private JFrame dialogFrame;
 	
 	private JLabel nameLabel;
@@ -140,8 +137,8 @@ public class SettingsDialog {
 		dialogFrame.getContentPane().add(emailFrequencyLabel, "cell 0 4");
 		
 		emailFrequencyCombo = new JComboBox<>();
-		emailFrequencyCombo.addItem(USER_EMAIL_FREQUENCY_DAILY);
-		emailFrequencyCombo.addItem(USER_EMAIL_FREQUENCY_WEEKLY);
+		emailFrequencyCombo.addItem(Constants.USER_EMAIL_FREQUENCY_DAILY);
+		emailFrequencyCombo.addItem(Constants.USER_EMAIL_FREQUENCY_WEEKLY);
 		emailFrequencyCombo.setSelectedItem(user.getEmailFrequency());
 		dialogFrame.getContentPane().add(emailFrequencyCombo, "cell 2 4,alignx left");
 		

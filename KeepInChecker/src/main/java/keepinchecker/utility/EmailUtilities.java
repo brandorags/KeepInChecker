@@ -17,16 +17,20 @@
 
 package keepinchecker.utility;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
 import javax.mail.internet.MimeMessage.RecipientType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
 import keepinchecker.constants.Constants;
 import keepinchecker.database.Queries;
+import keepinchecker.database.entity.User;
 
 public class EmailUtilities {
 	
@@ -41,22 +45,70 @@ public class EmailUtilities {
 	}
 
 	public static void sendScheduledEmail() throws Exception {
-		if (Constants.USER == null) {
-			return;
-		}
-		
 		if (emailLastSentDate == 0) {
-			Queries.saveEmailLastSentDate(new Date().getTime());
+			emailLastSentDate = new Date().getTime();
+			Queries.saveEmailLastSentDate(emailLastSentDate);
 		}
 		
-	    final Email email = new Email();
-	    email.setFromAddress("Sender's Name", "username@gmail.com");
-	    email.addRecipient("Recipient's Name", "username@example.com", RecipientType.TO);
+		if (canEmailBeSent(Constants.USER)) {
+			Email email = createEmail(Constants.USER);
+			Mailer mailer = new Mailer("smtp.gmail.com", 587, Constants.USER.getUserEmail(),
+					Constants.USER.getUserEmailPassword(), TransportStrategy.SMTP_TLS);
+			
+			mailer.sendMail(email);
+			
+			emailLastSentDate = new Date().getTime();
+			Queries.saveEmailLastSentDate(emailLastSentDate);
+		}
+	}
+	
+	protected static boolean canEmailBeSent(User user) {
+		if (user == null) {
+			return false;
+		}
+		
+		if (StringUtils.isEmpty(user.getUserEmail()) ||
+				StringUtils.isEmpty(user.getUserEmailPassword()) ||
+				user.getPartnerEmails().isEmpty()) {
+			return false;
+		}
+		
+		if (hasScheduledEmailBeenSent(user)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	protected static boolean hasScheduledEmailBeenSent(User user) {
+		String emailFrequency = user.getEmailFrequency();
+		long emailLastSentDate = user.getEmailLastSentDate();
+		Duration timeBetweenLastEmailSentToNow = Duration.between(
+				new Date(emailLastSentDate).toInstant(), Instant.now());
+		
+		if (StringUtils.equals(emailFrequency, Constants.USER_EMAIL_FREQUENCY_WEEKLY) &&
+				timeBetweenLastEmailSentToNow.toDays() < 7) {
+			return true;
+		} else if (StringUtils.equals(emailFrequency, Constants.USER_EMAIL_FREQUENCY_DAILY) &&
+				timeBetweenLastEmailSentToNow.toDays() < 1) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	protected static Email createEmail(User user) {
+	    Email email = new Email();
+	    
+	    email.setFromAddress(user.getUserName(), user.getUserEmail());
+	    for (String partnerEmail : user.getPartnerEmails()) {	    	
+	    	email.addRecipient("", partnerEmail, RecipientType.BCC);
+	    }
 //	    email.setText("Subject text goes here.");
+	    email.setSubject("KeepInChecker User Activity Report for " + user.getUserName());
 	    email.setTextHTML("<p>Subject text goes here.</p>");
-	    email.setSubject("KISSES");
-
-	    new Mailer("smtp.gmail.com", 587, "username@gmail.com", "hereiswherethepasswordgoes", TransportStrategy.SMTP_TLS).sendMail(email);
+	    
+	    return email;
 	}
 	
 }

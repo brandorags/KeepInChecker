@@ -38,6 +38,10 @@ public class Constants {
 	public static final Map<String, String> THIRD_PARTY_LIBRARIES_MAP = new HashMap<>();
 	
 	public static User USER = null;
+	
+	public static final String USER_EMAIL_FREQUENCY_DAILY = "Daily";
+	
+	public static final String USER_EMAIL_FREQUENCY_WEEKLY = "Weekly";
 
 	public static String DATABASE_PATH;
 	
