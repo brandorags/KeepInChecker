@@ -74,24 +74,24 @@ public class DbSession {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("CREATE TABLE IF NOT EXISTS \"Packet\" (");
-		builder.append("`PacketId` INTEGER NOT NULL,");
-		builder.append("`DateReceived` INTEGER NOT NULL,");
-		builder.append("`Timezone` TEXT,");
-		builder.append("`Get` TEXT,");
-		builder.append("`Host` TEXT,");
-		builder.append("`Referer` TEXT,");
+		builder.append("`PacketId` INTEGER NOT NULL, ");
+		builder.append("`DateReceived` INTEGER NOT NULL, ");
+		builder.append("`Timezone` TEXT, ");
+		builder.append("`Get` TEXT, ");
+		builder.append("`Host` TEXT, ");
+		builder.append("`Referer` TEXT, ");
 		builder.append("PRIMARY KEY(PacketId))");
 		statement.executeUpdate(builder.toString());
 		
 		builder = new StringBuilder();
 		builder.append("CREATE TABLE IF NOT EXISTS \"User\" (");
-		builder.append("`UserId` INTEGER NOT NULL,");
-		builder.append("`UserName` TEXT NOT NULL,");
-		builder.append("`UserEmail` TEXT NOT NULL,");
-		builder.append("`UserEmailPassword` TEXT NOT NULL,");
-		builder.append("`PartnerEmails` TEXT NOT NULL,");
-		builder.append("`EmailFrequency` TEXT NOT NULL,");
-		builder.append("`EmailLastSentDate` INTEGER,");
+		builder.append("`UserId` INTEGER NOT NULL, ");
+		builder.append("`UserName` TEXT NOT NULL, ");
+		builder.append("`UserEmail` TEXT NOT NULL, ");
+		builder.append("`UserEmailPassword` TEXT NOT NULL, ");
+		builder.append("`PartnerEmails` TEXT NOT NULL, ");
+		builder.append("`EmailFrequency` TEXT NOT NULL, ");
+		builder.append("`EmailLastSentDate` INTEGER, ");
 		builder.append("PRIMARY KEY(UserId))");
 		statement.executeUpdate(builder.toString());
 	}
