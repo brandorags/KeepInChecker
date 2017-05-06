@@ -19,7 +19,9 @@ package keepinchecker.utility;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.mail.internet.MimeMessage.RecipientType;
 
@@ -30,9 +32,21 @@ import org.simplejavamail.mailer.config.TransportStrategy;
 
 import keepinchecker.constants.Constants;
 import keepinchecker.database.Queries;
+import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
 
 public class EmailUtilities {
+	
+	protected static final String GOOGLE_MAIL_SERVER = "smtp.gmail.com";
+	protected static final String MICROSOFT_MAIL_SERVER = "smtp-mail.outlook.com";
+	protected static final String YAHOO_MAIL_SERVER = "smtp.mail.yahoo.com";
+	protected static final String AOL_MAIL_SERVER = "smtp.aol.com";
+	protected static final String COMCAST_MAIL_SERVER = "smtp.comcast.net";
+	protected static final String VERIZON_MAIL_SERVER = "smtp.verizon.net";
+	protected static final String ATT_MAIL_SERVER = "smtp.att.net";
+	
+	protected static final int PORT_FIVE_EIGHTY_SEVEN = 587;
+	protected static final int PORT_FOUR_SIXTY_FIVE = 465;
 	
 	private static long emailLastSentDate;
 	
@@ -97,18 +111,93 @@ public class EmailUtilities {
 		return false;
 	}
 	
-	protected static Email createEmail(User user) {
+	protected static Email createEmail(User user) throws Exception {
 	    Email email = new Email();
 	    
 	    email.setFromAddress(user.getUserName(), user.getUserEmail());
 	    for (String partnerEmail : user.getPartnerEmails()) {	    	
 	    	email.addRecipient("", partnerEmail, RecipientType.BCC);
 	    }
-//	    email.setText("Subject text goes here.");
 	    email.setSubject("KeepInChecker User Activity Report for " + user.getUserName());
-	    email.setTextHTML("<p>Subject text goes here.</p>");
+	    email.setText(generateBodyText(user.getUserName()));
 	    
 	    return email;
+	}
+	
+	protected static String getMailServer(String senderEmail) {
+		String mailServer = "";
+		
+		List<String> googleDomains = Arrays.asList("gmail", "googlemail");
+		List<String> microsoftDomains = Arrays.asList("hotmail", "outlook", "msn", "live", "passport");
+		List<String> yahooDomains = Arrays.asList("yahoo", "ymail");
+		List<String> aolDomains = Arrays.asList("aol", "aim");
+		List<String> comcastDomains = Arrays.asList("comcast");
+		List<String> verizonDomains = Arrays.asList("verizon");
+		List<String> attDomains = Arrays.asList("att");
+		
+		// get the domain portion of the email
+		String senderEmailDomain = StringUtils.substringAfter(senderEmail, "@");
+		// remove the TLD portion
+		senderEmailDomain = StringUtils.substringBeforeLast(senderEmailDomain, ".");
+		
+		if (googleDomains.contains(senderEmailDomain)) {
+			mailServer = GOOGLE_MAIL_SERVER;
+		} else if (microsoftDomains.contains(senderEmailDomain)) {
+			mailServer = MICROSOFT_MAIL_SERVER;
+		} else if (yahooDomains.contains(senderEmailDomain)) {
+			mailServer = YAHOO_MAIL_SERVER;
+		} else if (aolDomains.contains(senderEmailDomain)) {
+			mailServer = AOL_MAIL_SERVER;
+		} else if (comcastDomains.contains(senderEmailDomain)) {
+			mailServer = COMCAST_MAIL_SERVER;
+		} else if (verizonDomains.contains(senderEmailDomain)) {
+			mailServer = VERIZON_MAIL_SERVER;
+		} else if (attDomains.contains(senderEmailDomain)) {
+			mailServer = ATT_MAIL_SERVER;
+		}
+		
+		return mailServer;
+	}
+	
+	protected static int getPort(String mailServer) {
+		int port = 0;
+		
+		List<String> fiveEightySevenPortDomains = Arrays.asList(GOOGLE_MAIL_SERVER, MICROSOFT_MAIL_SERVER, 
+				YAHOO_MAIL_SERVER, AOL_MAIL_SERVER, COMCAST_MAIL_SERVER);
+		List<String> fourSixtyFivePortDomains = Arrays.asList(VERIZON_MAIL_SERVER, ATT_MAIL_SERVER);
+		
+		if (fiveEightySevenPortDomains.contains(mailServer)) {
+			port = PORT_FIVE_EIGHTY_SEVEN;
+		} else if (fourSixtyFivePortDomains.contains(mailServer)) {
+			port = PORT_FOUR_SIXTY_FIVE;
+		}
+		
+		return port;
+	}
+	
+	private static String generateBodyText(String senderName) throws Exception {
+		StringBuilder bodyText = new StringBuilder();
+		
+		bodyText.append("Hello,\n\nOn behalf of " + senderName + ", you have received this" +
+				" email with the following data,\n\n");
+		
+		List<KeepInCheckerPacket> packets = Queries.getPackets();
+		if (!packets.isEmpty()) {
+			StringBuilder packetData = new StringBuilder();
+			for (KeepInCheckerPacket packet : packets) {
+				packetData.append("\n" + new Date(packet.getTimestamp()).toString() + " " + packet.getTimezone() +
+						" " + packet.getGetValue() + " " + packet.getHostValue() + " " + packet.getRefererValue());
+			}
+			
+			bodyText.append(packets.size() + " questionable sites were visted:\n");
+			bodyText.append(packetData.toString());	
+		} else {
+			bodyText.append("0 questionable sites were visited.");
+		}
+		
+		bodyText.append("\n\nKeep staying accountable!\n\nSincerely,\nKeepInChecker");
+		
+		return bodyText.toString();
 	}
 	
 }

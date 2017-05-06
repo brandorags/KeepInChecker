@@ -3,14 +3,17 @@ package keepinchecker.database;
 import java.sql.ResultSet;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import keepinchecker.constants.Constants;
+import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
-import keepinchecker.network.KeepInCheckerPacket;
 
 public class Queries {
 	
@@ -107,7 +110,7 @@ public class Queries {
 			user.setEmailFrequency(set.getString("EmailFrequency"));
 			user.setEmailLastSentDate(set.getLong("EmailLastSentDate"));
 		}
-		session.commitAndClose();
+		session.close();
 		
 		return user;
 	}
@@ -158,6 +161,35 @@ public class Queries {
 		}
 		
 		session.commitAndClose();
+	}
+	
+	public static List<KeepInCheckerPacket> getPackets() throws Exception {
+		List<KeepInCheckerPacket> packets = new ArrayList<>();
+		
+		DbSession session = new DbSession(Constants.DATABASE_PATH);
+		ResultSet set = session.find("SELECT * FROM Packet");
+		if (set.next()) {
+			KeepInCheckerPacket packet = new KeepInCheckerPacket();
+			
+			packet.setTimestamp(set.getLong("DateReceived"));
+			packet.setTimezone(set.getString("Timezone"));
+			packet.setGetValue(set.getString("Get"));
+			packet.setHostValue(set.getString("Host"));
+			packet.setRefererValue(set.getString("Referer"));
+			
+			packets.add(packet);
+		}
+		session.close();
+		
+		Collections.sort(packets, new Comparator<KeepInCheckerPacket>() {
+
+			@Override
+			public int compare(KeepInCheckerPacket packet1, KeepInCheckerPacket packet2) {
+				return Long.compare(packet1.getTimestamp(), packet2.getTimestamp());
+			}
+		});
+		
+		return packets;
 	}
 
 }
