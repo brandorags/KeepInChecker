@@ -14,8 +14,9 @@ import org.simplejavamail.email.Recipient;
 
 import keepinchecker.constants.Constants;
 import keepinchecker.database.entity.User;
+import keepinchecker.setup.KeepInCheckerTestCase;
 
-public class EmailUtilitiesTest {
+public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	
 	@Test
 	public void testCanEmailBeSentAllUserCredentialsPresent() throws Exception {
