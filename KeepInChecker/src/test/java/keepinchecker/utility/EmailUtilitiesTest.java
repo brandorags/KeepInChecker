@@ -88,6 +88,60 @@ public class EmailUtilitiesTest {
 		}
 	}
 	
+	@Test
+	public void testGetMailServerGoogle() throws Exception {
+		String emailAddress = "example@gmail.com";
+		assertEquals("Should have the Google mail server", EmailUtilities.GOOGLE_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerMicrosoft() throws Exception {
+		String emailAddress = "example@outlook.com";
+		assertEquals("Should have the Microsoft mail server", EmailUtilities.MICROSOFT_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerYahoo() throws Exception {
+		String emailAddress = "example@yahoo.com";
+		assertEquals("Should have the Yahoo mail server", EmailUtilities.YAHOO_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerAol() throws Exception {
+		String emailAddress = "example@aol.com";
+		assertEquals("Should have the AOL mail server", EmailUtilities.AOL_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerComcast() throws Exception {
+		String emailAddress = "example@comcast.net";
+		assertEquals("Should have the Comcast mail server", EmailUtilities.COMCAST_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerVerizon() throws Exception {
+		String emailAddress = "example@verizon.net";
+		assertEquals("Should have the Verizon mail server", EmailUtilities.VERIZON_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+
+	@Test
+	public void testGetMailServerAtt() throws Exception {
+		String emailAddress = "example@att.net";
+		assertEquals("Should have the AT&T mail server", EmailUtilities.ATT_MAIL_SERVER, EmailUtilities.getMailServer(emailAddress));
+	}
+	
+	@Test
+	public void testGetPortFiveEightySeven() throws Exception {
+		String mailServer = EmailUtilities.GOOGLE_MAIL_SERVER;
+		assertEquals("The port number should be " + EmailUtilities.PORT_FIVE_EIGHTY_SEVEN, EmailUtilities.PORT_FIVE_EIGHTY_SEVEN, EmailUtilities.getPort(mailServer));
+	}
+
+	@Test
+	public void testGetPortFourSixtyFive() throws Exception {
+		String mailServer = EmailUtilities.VERIZON_MAIL_SERVER;
+		assertEquals("The port number should be " + EmailUtilities.PORT_FOUR_SIXTY_FIVE, EmailUtilities.PORT_FOUR_SIXTY_FIVE, EmailUtilities.getPort(mailServer));
+	}
+	
 	private long getTimeFromThePast(int daysToSubtract) {
 		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();

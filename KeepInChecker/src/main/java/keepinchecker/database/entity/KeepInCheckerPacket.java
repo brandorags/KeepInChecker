@@ -1,8 +1,13 @@
-package keepinchecker.network;
+package keepinchecker.database.entity;
 
-public class KeepInCheckerPacket {
+import java.io.Serializable;
+
+public class KeepInCheckerPacket implements Serializable {
+	
+	private static final long serialVersionUID = 3512272028255756831L;
 	
 	private long timestamp;
+	private String timezone;
 	private String getValue;
 	private String hostValue;
 	private String refererValue;
@@ -13,6 +18,14 @@ public class KeepInCheckerPacket {
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 
 	public String getGetValue() {
