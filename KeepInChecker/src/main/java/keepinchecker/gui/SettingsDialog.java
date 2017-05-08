@@ -38,7 +38,6 @@ import net.miginfocom.swing.MigLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.awt.event.ActionEvent;
 
@@ -74,22 +73,16 @@ public class SettingsDialog {
 			user.setUserEmailPassword(Constants.USER.getUserEmailPassword());
 			user.setPartnerEmails(Constants.USER.getPartnerEmails());
 			user.setEmailFrequency(Constants.USER.getEmailFrequency());
-		} else {			
-			user.setUserName("");
-			user.setUserEmail("");
-			user.setUserEmailPassword("");
-			user.setPartnerEmails(new ArrayList<>());
-			user.setEmailFrequency("");
 		}
 
-		initialize();
+		init();
 	}
 	
 	public void open() {
 		dialogFrame.setVisible(true);
 	}
 
-	private void initialize() {
+	private void init() {
 		dialogFrame = new JFrame();
 		dialogFrame.setTitle("Settings");
 		dialogFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

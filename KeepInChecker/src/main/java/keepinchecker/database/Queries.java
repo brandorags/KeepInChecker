@@ -69,7 +69,7 @@ public class Queries {
 		}
 		
 		if (!currentUser.getPartnerEmails().containsAll(updatedUser.getPartnerEmails())) {
-			updateValues.append("PartnerEmails = '" + String.join(",", updatedUser.getUserEmailPassword()) + "', ");
+			updateValues.append("PartnerEmails = '" + String.join(",", updatedUser.getPartnerEmails()) + "', ");
 			needsUpdate = true;
 		}
 		
