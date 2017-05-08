@@ -1,18 +1,19 @@
 package keepinchecker.database.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Serializable {
 	
 	private static final long serialVersionUID = -5884713152979754661L;
 	
-	private String userName;
-	private String userEmail;
-	private String userEmailPassword;
-	private List<String> partnerEmails;
-	private String emailFrequency;
-	private long emailLastSentDate;
+	private String userName = "";
+	private String userEmail = "";
+	private String userEmailPassword = "";
+	private List<String> partnerEmails = new ArrayList<>();
+	private String emailFrequency = "";
+	private long emailLastSentDate = 0;
 	
 	public User() {
 		
