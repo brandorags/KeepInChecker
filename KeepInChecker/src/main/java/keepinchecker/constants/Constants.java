@@ -66,9 +66,9 @@ public class Constants {
 				}
 			}
 		} else if (PlatformUtil.isWindows()) {
-			databasePath = "jdbc:sqlite:C:\\KeepInChecker\\KeepInChecker.sqlite";
-			if (!(new File("C:\\KeepInChecker").exists())) {
-				File keepInCheckerDir = new File("C:\\KeepInChecker");
+			databasePath = "jdbc:sqlite:C:\\Program Files\\KeepInChecker\\KeepInChecker.sqlite";
+			if (!(new File("C:\\Program Files\\KeepInChecker").exists())) {
+				File keepInCheckerDir = new File("C:\\Program Files\\KeepInChecker");
 				keepInCheckerDir.mkdirs();
 				boolean dirCreationSuccess = keepInCheckerDir.mkdirs();
 				if (!dirCreationSuccess) {
