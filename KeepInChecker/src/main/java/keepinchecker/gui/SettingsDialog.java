@@ -88,6 +88,7 @@ public class SettingsDialog {
 		dialogFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dialogFrame.setBounds(100, 100, 450, 300);
 		dialogFrame.getContentPane().setLayout(new MigLayout("", "[][][grow]", "[][][][grow][][]"));
+		dialogFrame.setLocationRelativeTo(null);
 		
 		nameLabel = new JLabel("Name:");
 		dialogFrame.getContentPane().add(nameLabel, "cell 0 0");
