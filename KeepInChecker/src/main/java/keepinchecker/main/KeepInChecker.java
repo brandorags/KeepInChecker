@@ -17,6 +17,10 @@
 
 package keepinchecker.main;
 
+import java.nio.file.Paths;
+
+import com.sun.javafx.PlatformUtil;
+
 import keepinchecker.constants.Constants;
 import keepinchecker.database.DbSession;
 import keepinchecker.database.Queries;
@@ -28,6 +32,7 @@ public class KeepInChecker {
 	public static void main(String[] args) throws Exception {
 		initializeDatabaseConnection();
 		initializeUser();
+		setSystemProperties();
 		launchBackend();
 		launchSystemTray();
 	}
@@ -42,6 +47,21 @@ public class KeepInChecker {
 		User user = Queries.getUser();
 		if (user != null) {
 			Constants.USER = user;
+		}
+	}
+	
+	private static void setSystemProperties() {
+		String pathToResources = Paths.get("../lib").toAbsolutePath().normalize().toString();
+		String pcapLibPackage = "org.pcap4j.core.pcapLibName";
+		String packetLibPackage = "org.pcap4j.core.packetLibName";
+		
+		if (PlatformUtil.isMac()) {
+			System.setProperty(pcapLibPackage, pathToResources + "/libpcap.dylib");
+		} else if (PlatformUtil.isLinux()) {
+		    // TODO
+		} else if (PlatformUtil.isWindows()) {
+			System.setProperty(pcapLibPackage, pathToResources + "\\wpcap");
+			System.setProperty(packetLibPackage, pathToResources + "\\Packet");
 		}
 	}
 	
