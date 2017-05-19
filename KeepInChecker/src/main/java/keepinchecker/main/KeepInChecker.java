@@ -58,7 +58,7 @@ public class KeepInChecker {
 		if (PlatformUtil.isMac()) {
 			System.setProperty(pcapLibPackage, pathToResources + "/libpcap.dylib");
 		} else if (PlatformUtil.isLinux()) {
-		    // TODO
+		    	System.setProperty(pcapLibPackage, pathToResources + "/libpcap.so");
 		} else if (PlatformUtil.isWindows()) {
 			System.setProperty(pcapLibPackage, pathToResources + "\\wpcap");
 			System.setProperty(packetLibPackage, pathToResources + "\\Packet");
