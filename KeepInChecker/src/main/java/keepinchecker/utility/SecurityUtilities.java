@@ -18,28 +18,50 @@
 package keepinchecker.utility;
 
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.Security;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class SecurityUtilities {
 	
-	// NOTE: this is not the key that is used in production
-	private static final byte[] KEY = "6fpzZk+/o9pHDIM8".getBytes(StandardCharsets.UTF_8);
-	private static final String ALGORITHM_TYPE = "AES";
+	private static final byte[] KEY;
+	private static final byte[] IV;
+	private static final String ALGORITHM_TYPE = "AES/CBC/PKCS5Padding";
 	
-	public static byte[] encrypt(String value) throws Exception {
-		SecretKeySpec secretKeySpec = new SecretKeySpec(KEY, ALGORITHM_TYPE);
+	static {
+		// NOTE: this is not the key that is used in production
+		String keyString = ")E3x_+z$Emen,hjgRc]>*W4{g)p]<DPt"; // 32 chars
+		KEY = keyString.getBytes(StandardCharsets.UTF_8);
+		// NOTE: this is not the initialization vector that is used in production
+		String ivString = "B,~j2Vw3W8en_Mf~"; // 16 chars
+		IV = ivString.getBytes(StandardCharsets.UTF_8);
+	}
+	
+	public static byte[] encrypt(String value) throws GeneralSecurityException {
+		Security.insertProviderAt(new BouncyCastleProvider(), 1);
+		
+		SecretKeySpec key = new SecretKeySpec(KEY, ALGORITHM_TYPE);
+		IvParameterSpec iv = new IvParameterSpec(IV);
+		
 		Cipher cipher = Cipher.getInstance(ALGORITHM_TYPE);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+		cipher.init(Cipher.ENCRYPT_MODE, key, iv);
 		
 		return cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
 	}
 	
-	public static String decrypt(byte[] value) throws Exception {
-		SecretKeySpec secretKeySpec = new SecretKeySpec(KEY, ALGORITHM_TYPE);
+	public static String decrypt(byte[] value) throws GeneralSecurityException {
+		Security.insertProviderAt(new BouncyCastleProvider(), 1);
+		
+		SecretKeySpec key = new SecretKeySpec(KEY, ALGORITHM_TYPE);
+		IvParameterSpec iv = new IvParameterSpec(IV);
+		
 		Cipher cipher = Cipher.getInstance(ALGORITHM_TYPE);
-		cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+		cipher.init(Cipher.DECRYPT_MODE, key, iv);
 		
 		return new String(cipher.doFinal(value));
 	}
