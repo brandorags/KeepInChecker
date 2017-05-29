@@ -24,6 +24,9 @@ dependencies {
 	
 	// Apache Commons Lang
 	compile 'org.apache.commons:commons-lang3:3.5'
+	
+	// Bouncy Castle
+	compile 'org.bouncycastle:bcprov-jdk15on:1.57'
 
 	// MiGLayout
 	compile 'com.miglayout:miglayout:3.7.4'
