@@ -2,6 +2,7 @@ package keepinchecker.utility;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,7 +13,6 @@ import org.junit.Test;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.Recipient;
 
-import keepinchecker.constants.Constants;
 import keepinchecker.database.entity.User;
 import keepinchecker.setup.KeepInCheckerTestCase;
 
@@ -23,7 +23,7 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 		User user = new User();
 		user.setUserEmail("test@example.com");
 		user.setUserEmailPassword("password");
-		user.setPartnerEmails(Arrays.asList("partner1@example.com", "partner2@example.com"));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
 		
 		assertTrue("Email should be able to be sent", EmailUtilities.canEmailBeSent(user));
 	}
@@ -32,7 +32,7 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	public void testCanEmailBeSentNotAllUserCredentialsPresent() throws Exception {
 		User user = new User();
 		user.setUserEmail("test@example.com");
-		user.setPartnerEmails(Arrays.asList("partner1@example.com", "partner2@example.com"));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
 		
 		assertFalse("Email should not be able to be sent", EmailUtilities.canEmailBeSent(user));
 	}
@@ -47,8 +47,8 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 		User user = new User();
 		user.setUserEmail("test@example.com");
 		user.setUserEmailPassword("password");
-		user.setPartnerEmails(Arrays.asList("partner1@example.com", "partner2@example.com"));
-		user.setEmailFrequency(Constants.USER_EMAIL_FREQUENCY_WEEKLY);
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
+		user.setEmailFrequency(User.EMAIL_FREQUENCY_WEEKLY);
 		user.setEmailLastSentDate(getTimeFromThePast(6));
 		
 		assertFalse("Email should not be able to be sent", EmailUtilities.canEmailBeSent(user));
@@ -57,7 +57,7 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testHasScheduledEmailBeenSentWeekly() throws Exception {
 		User user = new User();
-		user.setEmailFrequency(Constants.USER_EMAIL_FREQUENCY_WEEKLY);
+		user.setEmailFrequency(User.EMAIL_FREQUENCY_WEEKLY);
 		user.setEmailLastSentDate(getTimeFromThePast(6));
 		
 		assertTrue("Scheduled email should have already been sent", EmailUtilities.hasScheduledEmailBeenSent(user));
@@ -66,7 +66,7 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testHasScheduledEmailBeenSentDaily() throws Exception {
 		User user = new User();
-		user.setEmailFrequency(Constants.USER_EMAIL_FREQUENCY_DAILY);
+		user.setEmailFrequency(User.EMAIL_FREQUENCY_DAILY);
 		user.setEmailLastSentDate(getTimeFromThePast(1));
 		
 		assertFalse("Scheduled email should not have been sent", EmailUtilities.hasScheduledEmailBeenSent(user));
@@ -77,7 +77,7 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 		User user = new User();
 		user.setUserName("Test User");
 		user.setUserEmail("test@example.com");
-		user.setPartnerEmails(Arrays.asList("partner1@example.com", "partner2@example.com"));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
 		
 		Email email = EmailUtilities.createEmail(user);
 		

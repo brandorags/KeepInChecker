@@ -39,10 +39,6 @@ public class Constants {
 	
 	public static User USER = null;
 	
-	public static final String USER_EMAIL_FREQUENCY_DAILY = "Daily";
-	
-	public static final String USER_EMAIL_FREQUENCY_WEEKLY = "Weekly";
-
 	public static String DATABASE_PATH;
 	
 	static {

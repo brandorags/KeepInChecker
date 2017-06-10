@@ -17,6 +17,8 @@
 
 package keepinchecker.utility;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -31,7 +33,8 @@ import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.Queries;
+import keepinchecker.database.KeepInCheckerPacketManager;
+import keepinchecker.database.UserManager;
 import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
 
@@ -48,20 +51,12 @@ public class EmailUtilities {
 	protected static final int PORT_FIVE_EIGHTY_SEVEN = 587;
 	protected static final int PORT_FOUR_SIXTY_FIVE = 465;
 	
-	private static long emailLastSentDate;
+	private static final KeepInCheckerPacketManager packetManager = new KeepInCheckerPacketManager();
+	private static final UserManager userManager = new UserManager();
 	
-	static {
-		try {
-			emailLastSentDate = Queries.getEmailLastSentDate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void sendScheduledEmail() throws Exception {
-		if (emailLastSentDate == 0) {
-			emailLastSentDate = new Date().getTime();
-			Queries.saveEmailLastSentDate(emailLastSentDate);
+		if (Constants.USER.getEmailLastSentDate() == 0) {
+			setEmailLastSentDate();
 		}
 		
 		if (canEmailBeSent(Constants.USER)) {
@@ -71,8 +66,7 @@ public class EmailUtilities {
 			
 			mailer.sendMail(email);
 			
-			emailLastSentDate = new Date().getTime();
-			Queries.saveEmailLastSentDate(emailLastSentDate);
+			setEmailLastSentDate();
 		}
 	}
 	
@@ -100,10 +94,10 @@ public class EmailUtilities {
 		Duration timeBetweenLastEmailSentToNow = Duration.between(
 				new Date(emailLastSentDate).toInstant(), Instant.now());
 		
-		if (StringUtils.equals(emailFrequency, Constants.USER_EMAIL_FREQUENCY_WEEKLY) &&
+		if (StringUtils.equals(emailFrequency, User.EMAIL_FREQUENCY_WEEKLY) &&
 				timeBetweenLastEmailSentToNow.toDays() < 7) {
 			return true;
-		} else if (StringUtils.equals(emailFrequency, Constants.USER_EMAIL_FREQUENCY_DAILY) &&
+		} else if (StringUtils.equals(emailFrequency, User.EMAIL_FREQUENCY_DAILY) &&
 				timeBetweenLastEmailSentToNow.toDays() < 1) {
 			return true;
 		}
@@ -181,7 +175,7 @@ public class EmailUtilities {
 		bodyText.append("Hello,\n\nOn behalf of " + senderName + ", you have received this" +
 				" email with the following data,\n\n");
 		
-		List<KeepInCheckerPacket> packets = Queries.getPackets();
+		List<KeepInCheckerPacket> packets = packetManager.getPackets();
 		if (!packets.isEmpty()) {
 			StringBuilder packetData = new StringBuilder();
 			for (KeepInCheckerPacket packet : packets) {
@@ -198,6 +192,12 @@ public class EmailUtilities {
 		bodyText.append("\n\nKeep staying accountable!\n\nSincerely,\nKeepInChecker");
 		
 		return bodyText.toString();
+	}
+	
+	private static void setEmailLastSentDate() throws SQLException, IOException {
+		User user = new User();
+		user.setEmailLastSentDate(new Date().getTime());
+		userManager.saveUser(user);
 	}
 	
 }

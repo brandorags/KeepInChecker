@@ -18,12 +18,16 @@
 package keepinchecker.main;
 
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.sun.javafx.PlatformUtil;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.DbSession;
-import keepinchecker.database.Queries;
+import keepinchecker.database.UserManager;
+import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
 import keepinchecker.gui.KeepInCheckerSystemTray;
 
@@ -37,14 +41,15 @@ public class KeepInChecker {
 		launchSystemTray();
 	}
 	
-	private static void initializeDatabaseConnection() throws Exception {
-		DbSession dbSession = new DbSession(Constants.DATABASE_PATH);
-		dbSession.createTablesIfNoneExist();
-		dbSession.commitAndClose();
+	private static void initializeDatabaseConnection() throws SQLException {
+		ConnectionSource connectionSource = new JdbcConnectionSource(Constants.DATABASE_PATH);
+		TableUtils.createTableIfNotExists(connectionSource, User.class);
+		TableUtils.createTableIfNotExists(connectionSource, KeepInCheckerPacket.class);
 	}
 	
 	private static void initializeUser() throws Exception {
-		User user = Queries.getUser();
+		UserManager userManager = new UserManager();
+		User user = userManager.getUser();
 		if (user != null) {
 			Constants.USER = user;
 		}
