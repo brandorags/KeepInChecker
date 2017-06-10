@@ -15,6 +15,12 @@ dependencies {
 	
 	// SQLite JDBC Driver
 	compile 'org.xerial:sqlite-jdbc:3.16.1'
+
+	// OrmLite Core
+	compile 'com.j256.ormlite:ormlite-core:5.0'
+
+	// OrmLite JDBC
+	compile 'com.j256.ormlite:ormlite-jdbc:5.0'
 	
 	// Simple Java Mail
 	compile 'org.simplejavamail:simple-java-mail:4.2.1'

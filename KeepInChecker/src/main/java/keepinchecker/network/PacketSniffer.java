@@ -35,10 +35,13 @@ import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.Queries;
+import keepinchecker.database.KeepInCheckerPacketManager;
 import keepinchecker.database.entity.KeepInCheckerPacket;
+import keepinchecker.utility.SecurityUtilities;
 
 public class PacketSniffer {
+	
+	private static final KeepInCheckerPacketManager packetManager = new KeepInCheckerPacketManager();
 	
 	private Map<Timestamp, Packet> packetMap = new HashMap<>();
 	
@@ -93,9 +96,13 @@ public class PacketSniffer {
 				if (StringUtils.contains(packetString, objectionableWord)) {
 					KeepInCheckerPacket packet = new KeepInCheckerPacket();
 					packet.setTimestamp(packetTime.getTime());
-					packet.setGetValue(PacketParser.parse(PacketParser.GET, packetString));
-					packet.setHostValue(PacketParser.parse(PacketParser.HOST, packetString));
-					packet.setRefererValue(PacketParser.parse(PacketParser.REFERER, packetString));
+					
+					String parsedGetValue = PacketParser.parse(PacketParser.GET, packetString);
+					String parsedHostValue = PacketParser.parse(PacketParser.HOST, packetString);
+					String parsedReferValue = PacketParser.parse(PacketParser.REFERER, packetString);
+					packet.setGetValue(SecurityUtilities.encrypt(parsedGetValue));
+					packet.setHostValue(SecurityUtilities.encrypt(parsedHostValue));
+					packet.setRefererValue(SecurityUtilities.encrypt(parsedReferValue));
 					
 					if (!areGetHostAndRefererValuesEmpty(packet)) {						
 						objectionablePackets.add(packet);
@@ -107,14 +114,14 @@ public class PacketSniffer {
 		}
 		
 		if (!objectionablePackets.isEmpty()) {			
-			Queries.savePackets(objectionablePackets);
+			packetManager.savePackets(objectionablePackets);
 		}
 	}
 	
 	private boolean areGetHostAndRefererValuesEmpty(KeepInCheckerPacket packet) {
-		if (StringUtils.isEmpty(packet.getGetValue()) &&
-				StringUtils.isEmpty(packet.getHostValue()) &&
-				StringUtils.isEmpty(packet.getRefererValue())) {
+		if (StringUtils.isEmpty(packet.getGetValue().toString()) &&
+				StringUtils.isEmpty(packet.getHostValue().toString()) &&
+				StringUtils.isEmpty(packet.getRefererValue().toString())) {
 			return true;
 		}
 		

@@ -24,7 +24,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.Queries;
+import keepinchecker.database.UserManager;
 import keepinchecker.database.entity.User;
 
 import javax.swing.JPasswordField;
@@ -38,7 +38,6 @@ import net.miginfocom.swing.MigLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class SettingsDialog {
@@ -131,8 +130,8 @@ public class SettingsDialog {
 		dialogFrame.getContentPane().add(emailFrequencyLabel, "cell 0 4");
 		
 		emailFrequencyCombo = new JComboBox<>();
-		emailFrequencyCombo.addItem(Constants.USER_EMAIL_FREQUENCY_DAILY);
-		emailFrequencyCombo.addItem(Constants.USER_EMAIL_FREQUENCY_WEEKLY);
+		emailFrequencyCombo.addItem(User.EMAIL_FREQUENCY_DAILY);
+		emailFrequencyCombo.addItem(User.EMAIL_FREQUENCY_WEEKLY);
 		emailFrequencyCombo.setSelectedItem(user.getEmailFrequency());
 		dialogFrame.getContentPane().add(emailFrequencyCombo, "cell 2 4,alignx left");
 		
@@ -143,7 +142,7 @@ public class SettingsDialog {
 				String userEmail = emailTextField.getText();
 				String userEmailPassword = new String(passwordField.getPassword());
 				String emailFrequency = emailFrequencyCombo.getSelectedItem().toString();
-				List<String> partnerEmails = new ArrayList<>();
+				ArrayList<String> partnerEmails = new ArrayList<>();
 				for (int i = 0; i < partnersEmailsTable.getModel().getRowCount(); i++) {
 					try {
 						String partnerEmail = partnersEmailsTable.getModel().getValueAt(i, 0).toString();
@@ -162,7 +161,9 @@ public class SettingsDialog {
 					user.setUserEmailPassword(userEmailPassword);
 					user.setPartnerEmails(partnerEmails);
 					user.setEmailFrequency(emailFrequency);
-					Queries.saveUser(user);
+					
+					UserManager userManager = new UserManager();
+					userManager.saveUser(user);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
