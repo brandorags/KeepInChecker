@@ -2,6 +2,7 @@ package keepinchecker.utility;
 
 import static org.junit.Assert.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,9 +22,10 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testCanEmailBeSentAllUserCredentialsPresent() throws Exception {
 		User user = new User();
-		user.setUserEmail("test@example.com");
-		user.setUserEmailPassword("password");
-		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
+		user.setUserEmail("test@example.com".getBytes(StandardCharsets.UTF_8));
+		user.setUserEmailPassword("password".getBytes(StandardCharsets.UTF_8));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com".getBytes(StandardCharsets.UTF_8),
+				"partner2@example.com".getBytes(StandardCharsets.UTF_8))));
 		
 		assertTrue("Email should be able to be sent", EmailUtilities.canEmailBeSent(user));
 	}
@@ -31,8 +33,9 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testCanEmailBeSentNotAllUserCredentialsPresent() throws Exception {
 		User user = new User();
-		user.setUserEmail("test@example.com");
-		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
+		user.setUserEmail("test@example.com".getBytes(StandardCharsets.UTF_8));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com".getBytes(StandardCharsets.UTF_8),
+				"partner2@example.com".getBytes(StandardCharsets.UTF_8))));
 		
 		assertFalse("Email should not be able to be sent", EmailUtilities.canEmailBeSent(user));
 	}
@@ -45,9 +48,10 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testCanEmailBeSentScheduledEmailHasBeenAlreadySent() throws Exception {
 		User user = new User();
-		user.setUserEmail("test@example.com");
-		user.setUserEmailPassword("password");
-		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
+		user.setUserEmail("test@example.com".getBytes(StandardCharsets.UTF_8));
+		user.setUserEmailPassword("password".getBytes(StandardCharsets.UTF_8));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com".getBytes(StandardCharsets.UTF_8),
+				"partner2@example.com".getBytes(StandardCharsets.UTF_8))));		
 		user.setEmailFrequency(User.EMAIL_FREQUENCY_WEEKLY);
 		user.setEmailLastSentDate(getTimeFromThePast(6));
 		
@@ -75,9 +79,10 @@ public class EmailUtilitiesTest extends KeepInCheckerTestCase {
 	@Test
 	public void testCreateEmail() throws Exception {
 		User user = new User();
-		user.setUserName("Test User");
-		user.setUserEmail("test@example.com");
-		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com", "partner2@example.com")));
+		user.setUserName("Test User".getBytes(StandardCharsets.UTF_8));
+		user.setUserEmail("test@example.com".getBytes(StandardCharsets.UTF_8));
+		user.setPartnerEmails(new ArrayList<>(Arrays.asList("partner1@example.com".getBytes(StandardCharsets.UTF_8),
+				"partner2@example.com".getBytes(StandardCharsets.UTF_8))));	
 		
 		Email email = EmailUtilities.createEmail(user);
 		

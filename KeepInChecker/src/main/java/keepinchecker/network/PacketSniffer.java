@@ -17,6 +17,7 @@
 
 package keepinchecker.network;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +36,8 @@ import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.KeepInCheckerPacketManager;
 import keepinchecker.database.entity.KeepInCheckerPacket;
-import keepinchecker.utility.SecurityUtilities;
+import keepinchecker.database.manager.KeepInCheckerPacketManager;
 
 public class PacketSniffer {
 	
@@ -54,6 +54,16 @@ public class PacketSniffer {
 	    sendPacketsToDatabase(packetMap);
 	    
 	    packetMap.clear();
+	}
+	
+	protected boolean areGetHostAndRefererValuesEmpty(KeepInCheckerPacket packet) {
+		if (packet.getGetValue() == null &&
+				packet.getHostValue() == null &&
+				packet.getRefererValue() == null) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private PcapNetworkInterface getNetworkInterface() throws PcapNativeException {
@@ -100,9 +110,9 @@ public class PacketSniffer {
 					String parsedGetValue = PacketParser.parse(PacketParser.GET, packetString);
 					String parsedHostValue = PacketParser.parse(PacketParser.HOST, packetString);
 					String parsedReferValue = PacketParser.parse(PacketParser.REFERER, packetString);
-					packet.setGetValue(SecurityUtilities.encrypt(parsedGetValue));
-					packet.setHostValue(SecurityUtilities.encrypt(parsedHostValue));
-					packet.setRefererValue(SecurityUtilities.encrypt(parsedReferValue));
+					packet.setGetValue(parsedGetValue.getBytes(StandardCharsets.UTF_8));
+					packet.setHostValue(parsedHostValue.getBytes(StandardCharsets.UTF_8));
+					packet.setRefererValue(parsedReferValue.getBytes(StandardCharsets.UTF_8));
 					
 					if (!areGetHostAndRefererValuesEmpty(packet)) {						
 						objectionablePackets.add(packet);
@@ -118,15 +128,6 @@ public class PacketSniffer {
 		}
 	}
 	
-	private boolean areGetHostAndRefererValuesEmpty(KeepInCheckerPacket packet) {
-		if (StringUtils.isEmpty(packet.getGetValue().toString()) &&
-				StringUtils.isEmpty(packet.getHostValue().toString()) &&
-				StringUtils.isEmpty(packet.getRefererValue().toString())) {
-			return true;
-		}
-		
-		return false;
-	}
 	
 	private class KeepInCheckerPacketListener implements PacketListener {
 		

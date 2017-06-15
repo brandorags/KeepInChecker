@@ -17,8 +17,7 @@
 
 package keepinchecker.utility;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -33,10 +32,10 @@ import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.KeepInCheckerPacketManager;
-import keepinchecker.database.UserManager;
 import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
+import keepinchecker.database.manager.KeepInCheckerPacketManager;
+import keepinchecker.database.manager.UserManager;
 
 public class EmailUtilities {
 	
@@ -61,8 +60,10 @@ public class EmailUtilities {
 		
 		if (canEmailBeSent(Constants.USER)) {
 			Email email = createEmail(Constants.USER);
-			Mailer mailer = new Mailer("smtp.gmail.com", 587, Constants.USER.getUserEmail(),
-					Constants.USER.getUserEmailPassword(), TransportStrategy.SMTP_TLS);
+			String userEmailString = new String(Constants.USER.getUserEmail(), StandardCharsets.UTF_8);
+			String userEmailPassword = new String(Constants.USER.getUserEmailPassword(),StandardCharsets.UTF_8);
+			Mailer mailer = new Mailer("smtp.gmail.com", 587, userEmailString,
+					userEmailPassword, TransportStrategy.SMTP_TLS);
 			
 			mailer.sendMail(email);
 			
@@ -75,8 +76,8 @@ public class EmailUtilities {
 			return false;
 		}
 		
-		if (StringUtils.isEmpty(user.getUserEmail()) ||
-				StringUtils.isEmpty(user.getUserEmailPassword()) ||
+		if (user.getUserEmail() == null ||
+				user.getUserEmailPassword() == null ||
 				user.getPartnerEmails().isEmpty()) {
 			return false;
 		}
@@ -108,12 +109,15 @@ public class EmailUtilities {
 	protected static Email createEmail(User user) throws Exception {
 	    Email email = new Email();
 	    
-	    email.setFromAddress(user.getUserName(), user.getUserEmail());
-	    for (String partnerEmail : user.getPartnerEmails()) {	    	
-	    	email.addRecipient("", partnerEmail, RecipientType.BCC);
+	    String userName = new String(user.getUserName(), StandardCharsets.UTF_8);
+	    String userEmail = new String(user.getUserEmail(), StandardCharsets.UTF_8);
+	    email.setFromAddress(userName, userEmail);
+	    for (byte[] partnerEmail : user.getPartnerEmails()) {
+	    	String partnerEmailString = new String(partnerEmail, StandardCharsets.UTF_8);
+	    	email.addRecipient("", partnerEmailString, RecipientType.BCC);
 	    }
-	    email.setSubject("KeepInChecker User Activity Report for " + user.getUserName());
-	    email.setText(generateBodyText(user.getUserName()));
+	    email.setSubject("KeepInChecker User Activity Report for " + userName);
+	    email.setText(generateBodyText(userName));
 	    
 	    return email;
 	}
@@ -194,7 +198,7 @@ public class EmailUtilities {
 		return bodyText.toString();
 	}
 	
-	private static void setEmailLastSentDate() throws SQLException, IOException {
+	private static void setEmailLastSentDate() throws Exception {
 		User user = new User();
 		user.setEmailLastSentDate(new Date().getTime());
 		userManager.saveUser(user);

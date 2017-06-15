@@ -26,9 +26,9 @@ import com.j256.ormlite.table.TableUtils;
 import com.sun.javafx.PlatformUtil;
 
 import keepinchecker.constants.Constants;
-import keepinchecker.database.UserManager;
 import keepinchecker.database.entity.KeepInCheckerPacket;
 import keepinchecker.database.entity.User;
+import keepinchecker.database.manager.UserManager;
 import keepinchecker.gui.KeepInCheckerSystemTray;
 
 public class KeepInChecker {
