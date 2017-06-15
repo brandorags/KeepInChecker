@@ -18,17 +18,17 @@ public class User implements Serializable {
 	@DatabaseField(generatedId = true, columnName = "UserId")
 	private int userId;
 	
-	@DatabaseField(columnName = "UserName")
-	private String userName = "";
+	@DatabaseField(dataType = DataType.BYTE_ARRAY, columnName = "UserName")
+	private byte[] userName;
 	
-	@DatabaseField(columnName = "UserEmail")
-	private String userEmail = "";
+	@DatabaseField(dataType = DataType.BYTE_ARRAY, columnName = "UserEmail")
+	private byte[] userEmail;
 	
-	@DatabaseField(columnName = "UserEmailPassword")
-	private String userEmailPassword = "";
+	@DatabaseField(dataType = DataType.BYTE_ARRAY, columnName = "UserEmailPassword")
+	private byte[] userEmailPassword;
 	
 	@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = "PartnerEmails")
-	private ArrayList<String> partnerEmails = new ArrayList<>();
+	private ArrayList<byte[]> partnerEmails = new ArrayList<>();
 	
 	@DatabaseField(columnName = "EmailFrequency")
 	private String emailFrequency = "";
@@ -44,35 +44,35 @@ public class User implements Serializable {
 		return userId;
 	}
 
-	public String getUserName() {
+	public byte[] getUserName() {
 		return userName;
 	}
 	
-	public void setUserName(String userName) {
+	public void setUserName(byte[] userName) {
 		this.userName = userName;
 	}
 	
-	public String getUserEmail() {
+	public byte[] getUserEmail() {
 		return userEmail;
 	}
 	
-	public void setUserEmail(String userEmail) {
+	public void setUserEmail(byte[] userEmail) {
 		this.userEmail = userEmail;
 	}
 	
-	public String getUserEmailPassword() {
+	public byte[] getUserEmailPassword() {
 		return userEmailPassword;
 	}
 	
-	public void setUserEmailPassword(String userEmailPassword) {
+	public void setUserEmailPassword(byte[] userEmailPassword) {
 		this.userEmailPassword = userEmailPassword;
 	}
 	
-	public ArrayList<String> getPartnerEmails() {
+	public ArrayList<byte[]> getPartnerEmails() {
 		return partnerEmails;
 	}
 	
-	public void setPartnerEmails(ArrayList<String> partnerEmails) {
+	public void setPartnerEmails(ArrayList<byte[]> partnerEmails) {
 		this.partnerEmails = partnerEmails;
 	}
 	

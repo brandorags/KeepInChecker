@@ -41,29 +41,26 @@ public class SecurityUtilities {
 		String ivString = "B,~j2Vw3W8en_Mf~"; // 16 chars
 		IV = ivString.getBytes(StandardCharsets.UTF_8);
 	}
-	
-	public static byte[] encrypt(String value) throws GeneralSecurityException {
-		Security.insertProviderAt(new BouncyCastleProvider(), 1);
-		
-		SecretKeySpec key = new SecretKeySpec(KEY, ALGORITHM_TYPE);
-		IvParameterSpec iv = new IvParameterSpec(IV);
-		
-		Cipher cipher = Cipher.getInstance(ALGORITHM_TYPE);
-		cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-		
-		return cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
+
+	public static byte[] encrypt(byte[] value) throws GeneralSecurityException {
+		Cipher cipher = initCipher(Cipher.ENCRYPT_MODE);
+		return cipher.doFinal(value);
 	}
 	
-	public static String decrypt(byte[] value) throws GeneralSecurityException {
+	public static byte[] decrypt(byte[] value) throws GeneralSecurityException {
+		Cipher cipher = initCipher(Cipher.DECRYPT_MODE);
+		return cipher.doFinal(value);
+	}
+	
+	private static Cipher initCipher(int cryptMode) throws GeneralSecurityException {
 		Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		
 		SecretKeySpec key = new SecretKeySpec(KEY, ALGORITHM_TYPE);
 		IvParameterSpec iv = new IvParameterSpec(IV);
-		
 		Cipher cipher = Cipher.getInstance(ALGORITHM_TYPE);
-		cipher.init(Cipher.DECRYPT_MODE, key, iv);
+		cipher.init(cryptMode, key, iv);
 		
-		return new String(cipher.doFinal(value));
+		return cipher;
 	}
 
 }
