@@ -54,7 +54,7 @@ public class EmailUtilities {
 	private static final UserManager userManager = new UserManager();
 	
 	public static void sendScheduledEmail() throws Exception {
-		if (Constants.USER.getEmailLastSentDate() == 0) {
+		if (Constants.USER == null) {
 			setEmailLastSentDate();
 		}
 		

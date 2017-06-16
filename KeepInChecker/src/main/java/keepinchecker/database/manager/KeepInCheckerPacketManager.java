@@ -55,7 +55,9 @@ public class KeepInCheckerPacketManager {
 			
 			packets = packetDao.queryForAll();
 			
-			decryptSettings(packets);
+			if (packets != null && !packets.isEmpty()) {				
+				decryptSettings(packets);
+			}
 		} finally {
 			connectionSource.close();
 		}

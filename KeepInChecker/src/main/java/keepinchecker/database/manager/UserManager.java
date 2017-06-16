@@ -58,7 +58,9 @@ public class UserManager {
 			// we should only ever have one user
 			user = userDao.queryForId(1);
 			
-			decryptSettings(user);
+			if (user != null) {				
+				decryptSettings(user);
+			}
 		} finally {
 			connectionSource.close();
 		}
