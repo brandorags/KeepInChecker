@@ -32,7 +32,7 @@ public class User implements Serializable {
 	public static final String EMAIL_FREQUENCY_DAILY = "Daily";
 	public static final String EMAIL_FREQUENCY_WEEKLY = "Weekly";
 	
-	@DatabaseField(generatedId = true, columnName = "UserId")
+	@DatabaseField(id = true, columnName = "UserId")
 	private int userId;
 	
 	@DatabaseField(dataType = DataType.BYTE_ARRAY, columnName = "UserName")
@@ -55,6 +55,10 @@ public class User implements Serializable {
 	
 	public User() {
 		
+	}
+	
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	
 	public int getUserId() {

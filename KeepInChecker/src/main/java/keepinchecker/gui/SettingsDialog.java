@@ -71,7 +71,10 @@ public class SettingsDialog {
 		if (Constants.USER == null) {
 			isUserNotNull = false;
 		}
-
+		
+		// we should only ever have one user, so set its ID to 1 by default
+		user.setUserId(isUserNotNull ? Constants.USER.getUserId() : 1);
+		
 		user.setUserName(isUserNotNull ? Constants.USER.getUserName() : new byte[0]);
 		user.setUserEmail(isUserNotNull ? Constants.USER.getUserEmail() : new byte[0]);
 		user.setUserEmailPassword(isUserNotNull ? Constants.USER.getUserEmailPassword() : new byte[0]);

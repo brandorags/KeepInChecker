@@ -39,7 +39,7 @@ public class UserManager {
 			
 			encryptSettings(user);
 			
-			userDao.createOrUpdate(user);	
+			userDao.createOrUpdate(user);
 		} finally {
 			connectionSource.close();
 		}
