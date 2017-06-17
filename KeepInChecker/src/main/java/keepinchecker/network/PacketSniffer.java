@@ -19,6 +19,8 @@ package keepinchecker.network;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,12 +102,15 @@ public class PacketSniffer {
 		
 		for (Map.Entry<Timestamp, Packet> entry : packetMap.entrySet()) {
 			Timestamp packetTime = entry.getKey();
+			ZoneId currentTimezone = ZonedDateTime.now().getZone();
 			String packetString = PacketParser.convertToHumanReadableFormat(entry.getValue());
 			
 			for (String objectionableWord : Constants.OBJECTIONABLE_WORDS) {
 				if (StringUtils.contains(packetString, objectionableWord)) {
 					KeepInCheckerPacket packet = new KeepInCheckerPacket();
+					
 					packet.setTimestamp(packetTime.getTime());
+					packet.setTimezone(currentTimezone.getId());
 					
 					String parsedGetValue = PacketParser.parse(PacketParser.GET, packetString);
 					String parsedHostValue = PacketParser.parse(PacketParser.HOST, packetString);
