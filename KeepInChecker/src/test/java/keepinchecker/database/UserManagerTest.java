@@ -41,6 +41,7 @@ public class UserManagerTest extends KeepInCheckerTestCase {
 		User user = new User();
 		ArrayList<byte[]> partnerEmails = new ArrayList<>(Arrays.asList("test1@example.com".getBytes(StandardCharsets.UTF_8),
 				"test2@example.com".getBytes(StandardCharsets.UTF_8)));
+		user.setUserId(1);
 		user.setUserName("TestUser".getBytes(StandardCharsets.UTF_8));
 		user.setUserEmail("test@example.com".getBytes(StandardCharsets.UTF_8));
 		user.setUserEmailPassword("password".getBytes(StandardCharsets.UTF_8));
