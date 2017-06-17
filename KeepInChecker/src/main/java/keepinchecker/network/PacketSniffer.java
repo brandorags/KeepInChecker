@@ -49,13 +49,12 @@ public class PacketSniffer {
 	
 	public void sniffPackets() throws Exception {
 		PcapNetworkInterface networkInterface = getNetworkInterface();
-	    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.PROMISCUOUS, 5000);
-
-	    handle.loop(2000, new KeepInCheckerPacketListener(handle));
-	    
-	    sendPacketsToDatabase(packetMap);
-	    
-	    packetMap.clear();
+		if (networkInterface != null) {
+		    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.PROMISCUOUS, 5000);
+		    handle.loop(2000, new KeepInCheckerPacketListener(handle));
+		    
+		    sendPacketsToDatabase(packetMap);
+		}
 	}
 	
 	protected boolean areGetHostAndRefererValuesEmpty(KeepInCheckerPacket packet) {
