@@ -67,13 +67,16 @@ public class SettingsDialog {
 	private final User user = new User();
 
 	public SettingsDialog() {
-		if (Constants.USER != null) {
-			user.setUserName(Constants.USER.getUserName());
-			user.setUserEmail(Constants.USER.getUserEmail());
-			user.setUserEmailPassword(Constants.USER.getUserEmailPassword());
-			user.setPartnerEmails(Constants.USER.getPartnerEmails());
-			user.setEmailFrequency(Constants.USER.getEmailFrequency());
+		boolean isUserNotNull = true;
+		if (Constants.USER == null) {
+			isUserNotNull = false;
 		}
+
+		user.setUserName(isUserNotNull ? Constants.USER.getUserName() : new byte[0]);
+		user.setUserEmail(isUserNotNull ? Constants.USER.getUserEmail() : new byte[0]);
+		user.setUserEmailPassword(isUserNotNull ? Constants.USER.getUserEmailPassword() : new byte[0]);
+		user.setPartnerEmails(isUserNotNull ? Constants.USER.getPartnerEmails() : new ArrayList<>());
+		user.setEmailFrequency(isUserNotNull ? Constants.USER.getEmailFrequency() : "");
 
 		init();
 	}

@@ -45,13 +45,13 @@ public class User implements Serializable {
 	private byte[] userEmailPassword;
 	
 	@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = "PartnerEmails")
-	private ArrayList<byte[]> partnerEmails = new ArrayList<>();
+	private ArrayList<byte[]> partnerEmails;
 	
 	@DatabaseField(columnName = "EmailFrequency")
-	private String emailFrequency = "";
+	private String emailFrequency;
 	
 	@DatabaseField(columnName = "EmailLastSentDate")
-	private long emailLastSentDate = 0;
+	private long emailLastSentDate;
 	
 	public User() {
 		
