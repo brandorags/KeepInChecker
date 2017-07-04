@@ -21,10 +21,11 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pcap4j.core.PacketListener;
@@ -97,7 +98,7 @@ public class PacketSniffer {
 	}
 	
 	private void sendPacketsToDatabase(Map<Timestamp, Packet> packetMap) throws Exception {
-		List<KeepInCheckerPacket> objectionablePackets = new ArrayList<>();
+		Set<KeepInCheckerPacket> objectionablePackets = new HashSet<>();
 		
 		for (Map.Entry<Timestamp, Packet> entry : packetMap.entrySet()) {
 			Timestamp packetTime = entry.getKey();
