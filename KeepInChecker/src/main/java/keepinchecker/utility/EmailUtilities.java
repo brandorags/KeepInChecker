@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.mail.internet.MimeMessage.RecipientType;
 
@@ -179,7 +180,7 @@ public class EmailUtilities {
 		bodyText.append("Hello,\n\nOn behalf of " + senderName + ", you have received this" +
 				" email with the following data,\n\n");
 		
-		List<KeepInCheckerPacket> packets = packetManager.getPackets();
+		Set<KeepInCheckerPacket> packets = packetManager.getPackets();
 		if (!packets.isEmpty()) {
 			StringBuilder packetData = new StringBuilder();
 			for (KeepInCheckerPacket packet : packets) {

@@ -23,7 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -61,8 +62,8 @@ public class KeepInCheckerPacketManagerTest extends KeepInCheckerTestCase {
 		packet3.setHostValue("Packet3HostValue".getBytes(StandardCharsets.UTF_8));
 		packet3.setRefererValue("Packet3RefererValue".getBytes(StandardCharsets.UTF_8));
 		
-		packetManager.savePackets(Arrays.asList(packet1, packet2, packet3));
-		List<KeepInCheckerPacket> packetsFromDb = packetManager.getPackets();
+		packetManager.savePackets(new HashSet<>(Arrays.asList(packet1, packet2, packet3)));
+		Set<KeepInCheckerPacket> packetsFromDb = packetManager.getPackets();
 		
 		assertEquals("All packets should have been saved to the database", 3, packetsFromDb.size());
 		for (KeepInCheckerPacket packet : packetsFromDb) {

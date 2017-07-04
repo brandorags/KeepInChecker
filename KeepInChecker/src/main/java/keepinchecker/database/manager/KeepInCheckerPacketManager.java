@@ -17,7 +17,8 @@
 
 package keepinchecker.database.manager;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -33,7 +34,7 @@ public class KeepInCheckerPacketManager {
 	private ConnectionSource connectionSource;
 	private Dao<KeepInCheckerPacket, Long> packetDao;
 	
-	public void savePackets(List<KeepInCheckerPacket> packets) throws Exception {
+	public void savePackets(Set<KeepInCheckerPacket> packets) throws Exception {
 		try {
 			connectionSource = new JdbcConnectionSource(Constants.DATABASE_PATH);
 			packetDao = DaoManager.createDao(connectionSource, KeepInCheckerPacket.class);
@@ -46,14 +47,14 @@ public class KeepInCheckerPacketManager {
 		}
 	}
 	
-	public List<KeepInCheckerPacket> getPackets() throws Exception {
-		List<KeepInCheckerPacket> packets = null;
+	public Set<KeepInCheckerPacket> getPackets() throws Exception {
+		Set<KeepInCheckerPacket> packets = null;
 		
 		try {
 			connectionSource = new JdbcConnectionSource(Constants.DATABASE_PATH);
 			packetDao = DaoManager.createDao(connectionSource, KeepInCheckerPacket.class);
 			
-			packets = packetDao.queryForAll();
+			packets = new HashSet<>(packetDao.queryForAll());
 			
 			if (packets != null && !packets.isEmpty()) {				
 				decryptSettings(packets);
@@ -65,7 +66,7 @@ public class KeepInCheckerPacketManager {
 		return packets;
 	}
 	
-	private void encryptSettings(List<KeepInCheckerPacket> packets) throws Exception {
+	private void encryptSettings(Set<KeepInCheckerPacket> packets) throws Exception {
 		for (KeepInCheckerPacket packet : packets) {
 			packet.setGetValue(SecurityUtilities.encrypt(packet.getGetValue()));
 			packet.setHostValue(SecurityUtilities.encrypt(packet.getHostValue()));
@@ -73,7 +74,7 @@ public class KeepInCheckerPacketManager {
 		}
 	}
 
-	private void decryptSettings(List<KeepInCheckerPacket> packets) throws Exception {
+	private void decryptSettings(Set<KeepInCheckerPacket> packets) throws Exception {
 		for (KeepInCheckerPacket packet : packets) {
 			packet.setGetValue(SecurityUtilities.decrypt(packet.getGetValue()));
 			packet.setHostValue(SecurityUtilities.decrypt(packet.getHostValue()));
