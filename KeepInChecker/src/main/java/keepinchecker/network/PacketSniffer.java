@@ -50,7 +50,7 @@ public class PacketSniffer {
 	public void sniffPackets() throws Exception {
 		PcapNetworkInterface networkInterface = getNetworkInterface();
 		if (networkInterface != null) {
-		    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.PROMISCUOUS, 5000);
+		    PcapHandle handle = networkInterface.openLive(65536, PromiscuousMode.NONPROMISCUOUS, 5000);
 		    handle.loop(2000, new KeepInCheckerPacketListener(handle));
 		    
 		    sendPacketsToDatabase(packetMap);
