@@ -55,20 +55,23 @@ public class EmailUtilities {
 	private static final UserManager userManager = new UserManager();
 	
 	public static void sendScheduledEmail() throws Exception {
-		if (Constants.USER != null) {
-			setEmailLastSentDate();
+		User currentUser = Constants.USER;
+		
+		// initialize the email last sent date
+		if (currentUser != null && currentUser.getEmailLastSentDate() == 0) {
+			setEmailLastSentDate(currentUser);
 		}
 		
-		if (canEmailBeSent(Constants.USER)) {
-			Email email = createEmail(Constants.USER);
-			String userEmailString = new String(Constants.USER.getUserEmail(), StandardCharsets.UTF_8);
-			String userEmailPassword = new String(Constants.USER.getUserEmailPassword(),StandardCharsets.UTF_8);
+		if (canEmailBeSent(currentUser)) {
+			Email email = createEmail(currentUser);
+			String userEmailString = new String(currentUser.getUserEmail(), StandardCharsets.UTF_8);
+			String userEmailPassword = new String(currentUser.getUserEmailPassword(), StandardCharsets.UTF_8);
 			Mailer mailer = new Mailer("smtp.gmail.com", 587, userEmailString,
 					userEmailPassword, TransportStrategy.SMTP_TLS);
 			
 			mailer.sendMail(email);
 			
-			setEmailLastSentDate();
+			setEmailLastSentDate(currentUser);
 		}
 	}
 	
@@ -183,6 +186,7 @@ public class EmailUtilities {
 		Set<KeepInCheckerPacket> packets = packetManager.getPackets();
 		if (!packets.isEmpty()) {
 			StringBuilder packetData = new StringBuilder();
+			
 			for (KeepInCheckerPacket packet : packets) {
 				packetData.append("\n" + new Date(packet.getTimestamp()).toString() + " " + packet.getTimezone() +
 						" " + packet.getGetValue() + " " + packet.getHostValue() + " " + packet.getRefererValue());
@@ -199,8 +203,7 @@ public class EmailUtilities {
 		return bodyText.toString();
 	}
 	
-	private static void setEmailLastSentDate() throws Exception {
-		User user = new User();
+	private static void setEmailLastSentDate(User user) throws Exception {
 		user.setEmailLastSentDate(new Date().getTime());
 		userManager.saveUser(user);
 	}
