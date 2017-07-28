@@ -2,7 +2,10 @@
 .recommenders/
 RemoteSystemsTempFiles/
 KeepInChecker/bin/
+KeepInChecker/out/
 KeepInChecker/.gradle/
 KeepInChecker/.settings/
+KeepInChecker/.idea/
 *.classpath
 *.project
+*.iml
