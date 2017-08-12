@@ -37,6 +37,9 @@ dependencies {
 
 	// MiGLayout
 	compile 'com.miglayout:miglayout:3.7.4'
+
+	// IntelliJ UI Designer
+	compile 'com.intellij:forms_rt:7.0.3'
 	
 	// JUnit
 	testCompile 'junit:junit:4.12'
