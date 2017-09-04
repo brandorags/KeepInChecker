@@ -28,14 +28,14 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class SecurityUtilities {
-	
+
 	private static final byte[] KEY;
 	private static final byte[] IV;
 	private static final String ALGORITHM_TYPE = "AES/CBC/PKCS5Padding";
 	
 	static {
 		// NOTE: this is not the key that is used in production
-		String keyString = ")E3x_+z$Emen,hjgRc]>*W4{g)p]<DPt"; // 32 chars
+		String keyString = ")E3x_+z$Emen,hjg"; // 16 chars
 		KEY = keyString.getBytes(StandardCharsets.UTF_8);
 		// NOTE: this is not the initialization vector that is used in production
 		String ivString = "B,~j2Vw3W8en_Mf~"; // 16 chars
