@@ -17,6 +17,8 @@
 
 package keepinchecker.main;
 
+import keepinchecker.constants.Constants;
+import keepinchecker.gui.WelcomeDialog;
 import keepinchecker.network.PacketSniffer;
 import keepinchecker.utility.EmailUtilities;
 
@@ -24,12 +26,17 @@ public class KeepInCheckerBackend implements Runnable {
 
 	@Override
 	public void run() {
+		if (Constants.USER == null) {
+			WelcomeDialog welcomeDialog = new WelcomeDialog();
+			welcomeDialog.open();
+		}
+
 		try {
 			while (true) {
-//				Thread.sleep(10000);
-//				
-//				PacketSniffer packetSniffer = new PacketSniffer();
-//				packetSniffer.sniffPackets();	
+				Thread.sleep(10000);
+				
+				PacketSniffer packetSniffer = new PacketSniffer();
+				packetSniffer.sniffPackets();	
 				
 				EmailUtilities.sendScheduledEmail();
 			}

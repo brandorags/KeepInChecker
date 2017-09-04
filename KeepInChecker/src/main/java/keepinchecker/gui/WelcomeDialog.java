@@ -7,6 +7,10 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class WelcomeDialog extends JDialog {
 
@@ -60,8 +64,29 @@ public class WelcomeDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: make service call to send email
                 successLabel.setVisible(true);
+                successLabel.setText("Sending email. Please wait.");
+
+                try {
+                    URL url = new URL("https://example.com");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setRequestMethod("GET");
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String out = "";
+                    StringBuilder response = new StringBuilder();
+                    while ((out = in.readLine()) != null) {
+                        response.append(out);
+                    }
+                    in.close();
+
+                    System.out.println(response.toString());
+                    successLabel.setText("Success. Please close this window.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    successLabel.setText("An error occurred.");
+                }
             }
 
         });
@@ -144,4 +169,5 @@ public class WelcomeDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return loginDialogContentPane;
     }
+
 }
