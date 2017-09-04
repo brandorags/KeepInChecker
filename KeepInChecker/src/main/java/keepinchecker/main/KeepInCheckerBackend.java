@@ -26,10 +26,10 @@ public class KeepInCheckerBackend implements Runnable {
 	public void run() {
 		try {
 			while (true) {
-//				Thread.sleep(10000);
-//				
-//				PacketSniffer packetSniffer = new PacketSniffer();
-//				packetSniffer.sniffPackets();	
+				Thread.sleep(10000);
+
+				PacketSniffer packetSniffer = new PacketSniffer();
+				packetSniffer.sniffPackets();
 				
 				EmailUtilities.sendScheduledEmail();
 			}
